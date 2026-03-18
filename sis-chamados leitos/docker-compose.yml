@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hospital_app
+    restart: always
+    ports:
+      - "4080:4080"
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=hospital_system
+      - NODE_ENV=production
+    volumes:
+      - ./public/uploads:/app/public/uploads
+    depends_on:
+      - db
+    networks:
+      - hospital_network
+
+  db:
+    image: mariadb:10.11
+    container_name: hospital_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hospital_system
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      # Automate database initialization with the SQL files
+      - ./scripts:/docker-entrypoint-initdb.d
+    networks:
+      - hospital_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: hospital_pma
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - hospital_network
+
+volumes:
+  db_data:
+
+networks:
+  hospital_network:

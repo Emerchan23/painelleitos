@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app:
+    image: emerchan2025/chamadosleitos:latest
+    container_name: hospital_app
+    restart: always
+    ports:
+      - "6542:6542"
+    networks:
+      - patt_sispatrimonio-swarm-net
+    environment:
+      # Conectando direto no IP do banco que descobrimos: 10.0.2.6
+      # Como estão na mesma rede Docker, o IP é acessível.
+      - DB_HOST=10.0.2.6
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=hospital_system
+      - NODE_ENV=production
+      - PORT=6542
+      - HOSTNAME=0.0.0.0
+    volumes:
+      # Mapeamento do diretório físico para upload de logos e mídias
+      - /media/ZimaOS-HD/gestao-database/chamados_hospitalar/uploads:/app/public/uploads
+
+networks:
+  patt_sispatrimonio-swarm-net:
+    external: true
