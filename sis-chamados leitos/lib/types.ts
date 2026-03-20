@@ -97,6 +97,20 @@ export interface AdminUser {
   createdAt: Date
 }
 
+export interface DBWard {
+  id: string
+  name: string
+  description: string | null
+  created_at: Date
+}
+
+export interface Ward {
+  id: string
+  name: string
+  description?: string
+  createdAt?: Date
+}
+
 export interface Bed {
   id: string
   number: string
@@ -118,6 +132,7 @@ export interface BedCall {
   priority: CallPriority
   status: CallStatus
   ward?: WardType
+  room?: string
   createdAt: Date
   seenAt?: Date
   attendingAt?: Date
@@ -166,6 +181,7 @@ export interface CreateBedRequest {
   room: string
   status?: BedStatus
   patientName?: string
+  showInRoom?: boolean
 }
 
 export interface UpdateBedRequest {

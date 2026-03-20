@@ -25,10 +25,12 @@ DELIMITER $$
 --
 -- Procedimentos
 --
+DROP PROCEDURE IF EXISTS `sp_cleanup_expired_sessions`$$
 CREATE DEFINER=`root`@`%` PROCEDURE `sp_cleanup_expired_sessions` ()   BEGIN
     DELETE FROM sessions WHERE expires_at < NOW();
 END$$
 
+DROP PROCEDURE IF EXISTS `sp_create_call`$$
 CREATE DEFINER=`root`@`%` PROCEDURE `sp_create_call` (IN `p_bed_number` VARCHAR(20), IN `p_patient_name` VARCHAR(255), IN `p_call_type` VARCHAR(50), IN `p_ward` VARCHAR(100))   BEGIN
     DECLARE v_id VARCHAR(36);
     DECLARE v_bed_id VARCHAR(36);
@@ -54,6 +56,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `sp_create_call` (IN `p_bed_number` VARCHAR(
     SELECT v_id as id;
 END$$
 
+DROP PROCEDURE IF EXISTS `sp_update_call_status`$$
 CREATE DEFINER=`root`@`%` PROCEDURE `sp_update_call_status` (IN `p_call_id` VARCHAR(36), IN `p_status` VARCHAR(20))   BEGIN
     UPDATE calls 
     SET 
@@ -372,6 +375,19 @@ INSERT INTO `refresh_settings` (`id`, `enabled`, `interval_seconds`, `timezone`,
 -- --------------------------------------------------------
 
 --
+-- Estrutura para tabela `room_tokens`
+--
+
+CREATE TABLE `room_tokens` (
+  `id` varchar(36) NOT NULL,
+  `ward` varchar(100) NOT NULL,
+  `room` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura para tabela `sessions`
 --
 
@@ -580,6 +596,13 @@ ALTER TABLE `refresh_settings`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Índices de tabela `room_tokens`
+--
+ALTER TABLE `room_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_ward_room` (`ward`, `room`);
+
+--
 -- Índices de tabela `sessions`
 --
 ALTER TABLE `sessions`
@@ -653,6 +676,12 @@ ALTER TABLE `calls`
   ADD CONSTRAINT `calls_ibfk_2` FOREIGN KEY (`call_type`) REFERENCES `call_types` (`code`) ON UPDATE CASCADE;
 
 --
+-- Restrições para tabelas `room_tokens`
+--
+ALTER TABLE `room_tokens`
+  ADD CONSTRAINT `room_tokens_ibfk_1` FOREIGN KEY (`ward`) REFERENCES `wards` (`name`) ON UPDATE CASCADE;
+
+--
 -- Restrições para tabelas `sessions`
 --
 ALTER TABLE `sessions`
@@ -662,6 +691,7 @@ DELIMITER $$
 --
 -- Eventos
 --
+DROP EVENT IF EXISTS `ev_cleanup_sessions`$$
 CREATE DEFINER=`root`@`%` EVENT `ev_cleanup_sessions` ON SCHEDULE EVERY 1 HOUR STARTS '2026-03-18 09:48:30' ON COMPLETION NOT PRESERVE ENABLE DO CALL sp_cleanup_expired_sessions()$$
 
 DELIMITER ;

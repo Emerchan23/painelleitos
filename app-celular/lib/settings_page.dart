@@ -139,8 +139,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'Obrigatório';
-                  if (!value.startsWith('http'))
+                  if (!value.startsWith('http')) {
                     return 'Deve começar com http://';
+                  }
                   return null;
                 },
               ),

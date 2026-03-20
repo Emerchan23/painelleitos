@@ -151,30 +151,37 @@ export function NursingDashboard() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             {/* Left Area: Title & Navigation */}
-            <div className="flex items-center gap-4 flex-1">
+            <div className="flex items-center gap-4 w-auto shrink-0">
               <div className="bg-primary p-3 rounded-xl shadow-inner shrink-0">
                 <HeartPulse className="h-8 w-8 text-primary-foreground" />
               </div>
-              <div className="whitespace-nowrap">
+              <div className="whitespace-nowrap hidden lg:block">
                 <h1 className="text-3xl font-black text-foreground tracking-tight">Central de Enfermagem</h1>
                 <p className="text-lg font-medium text-muted-foreground">Painel de Chamados</p>
               </div>
             </div>
 
             {/* Center Area: Custom Company Info (Logo + Name) */}
-            <div className="flex items-center justify-center flex-1">
-              <div className="flex flex-row items-center justify-center text-center opacity-80 gap-3">
-                {refreshSettings?.logo_url ? (
-                  <img src={refreshSettings.logo_url} alt="Logo" className="h-12 object-contain" />
-                ) : null}
-                <span className="text-xl font-bold tracking-widest uppercase text-muted-foreground">
+            <div className="flex items-center justify-center flex-1 mx-4 sm:mx-8">
+              <div className="flex flex-row items-center justify-center text-center opacity-90 gap-4 bg-muted/20 px-6 py-2 rounded-2xl w-full max-w-3xl">
+                {refreshSettings?.logo_url && (
+                  <div className="relative h-16 shrink-0 flex items-center">
+                    <img 
+                      src={refreshSettings.logo_url} 
+                      alt="Logo" 
+                      className="h-full w-auto object-contain max-w-[200px]"
+                      onError={(e) => (e.currentTarget.style.display = 'none')}
+                    />
+                  </div>
+                )}
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black tracking-widest uppercase text-slate-700 dark:text-slate-200 leading-tight">
                   {refreshSettings?.company_name || "HOSPITAL SYSTEM"}
                 </span>
               </div>
             </div>
 
             {/* Right Area: Controls & Clock */}
-            <div className="flex items-center justify-end gap-6 flex-1">
+            <div className="flex items-center justify-end gap-4 sm:gap-6 w-auto shrink-0">
               {/* Fullscreen Toggle */}
               <Button
                 variant="ghost"

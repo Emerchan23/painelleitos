@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    let bed: DBBed | undefined;
+    let bed: DBBed | null | undefined;
 
     // Buscar ID do leito. Se veio por token (id), usa o token. Senão, tenta pelo número/quarto.
     if (token) {

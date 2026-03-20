@@ -16,6 +16,7 @@ export interface Ward {
   id: string
   name: string
   description?: string
+  createdAt?: Date
 }
 
 export interface AdminUser {
@@ -63,6 +64,7 @@ export interface Bed {
   room: string
   status: BedStatus
   patientName?: string
+  showInRoom?: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -402,7 +404,7 @@ export function HospitalProvider({ children }: { children: React.ReactNode }) {
     // Check if we have any newly created calls that haven't been sounded yet
     // For simplicity, we just check if hasNewCalls is true
     if (hasNewCalls) {
-      const highestPriority = pendingCalls.reduce((highest: any, call: any) => {
+      const highestPriority = pendingCalls.reduce((highest: BedCall, call: BedCall) => {
         const priorityOrder: Record<CallPriority, number> = { emergency: 0, urgent: 1, routine: 2 }
         return priorityOrder[call.priority] < priorityOrder[highest.priority] ? call : highest
       }, pendingCalls[0])
@@ -477,7 +479,7 @@ export function HospitalProvider({ children }: { children: React.ReactNode }) {
       // Check if enough time has passed since the last sound
       // We add a small buffer (100ms) to ensure stability
       if (now - lastSoundTimeRef.current >= (soundSettings.repeatIntervalSeconds * 1000) - 100) {
-        const highestPriority = pendingCalls.reduce((highest: any, call: any) => {
+        const highestPriority = pendingCalls.reduce((highest: BedCall, call: BedCall) => {
           const priorityOrder: Record<CallPriority, number> = { emergency: 0, urgent: 1, routine: 2 }
           return priorityOrder[call.priority] < priorityOrder[highest.priority] ? call : highest
         }, pendingCalls[0])

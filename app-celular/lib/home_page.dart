@@ -119,9 +119,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  bool _isDialogVisible = false;
+
   void _startPolling() {
     _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
-      if (_bedToken.isNotEmpty) {
+      if (_bedToken.isNotEmpty && !_isDialogVisible) {
         _fetchCalls();
       }
     });
@@ -157,103 +159,118 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showPasswordDialog() async {
+    setState(() {
+      _isDialogVisible = true;
+    });
+
     final TextEditingController passwordController = TextEditingController();
     String? errorMessage;
     bool isVerifying = false;
     bool obscureText = true;
 
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (dialogContext, setStateDialog) {
-            return AlertDialog(
-              title: const Text('Acesso Restrito'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Digite a senha para acessar as configurações:'),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: passwordController,
-                    obscureText: obscureText,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: 'Senha',
-                      errorText: errorMessage,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          obscureText ? Icons.visibility : Icons.visibility_off,
+    try {
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (dialogContext, setStateDialog) {
+              Future<void> submitPassword() async {
+                if (passwordController.text.isEmpty) return;
+
+                setStateDialog(() {
+                  isVerifying = true;
+                  errorMessage = null;
+                });
+
+                final result = await ApiService.verifyPassword(
+                  passwordController.text,
+                );
+
+                if (!dialogContext.mounted) return;
+
+                if (result['success'] == true) {
+                  Navigator.pop(dialogContext);
+                  if (!mounted) return;
+                  final settingsResult = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsPage(),
+                    ),
+                  );
+                  if (settingsResult == true) {
+                    _loadSettings();
+                  }
+                } else {
+                  setStateDialog(() {
+                    isVerifying = false;
+                    errorMessage = result['message'];
+                  });
+                }
+              }
+
+              return AlertDialog(
+                title: const Text('Acesso Restrito'),
+                scrollable: true,
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Digite a senha para acessar as configurações:'),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: passwordController,
+                      obscureText: obscureText,
+                      keyboardType: TextInputType.number,
+                      autofocus: true,
+                      onSubmitted: (_) => submitPassword(),
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: 'Senha',
+                        errorText: errorMessage,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            obscureText ? Icons.visibility : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setStateDialog(() {
+                              obscureText = !obscureText;
+                            });
+                          },
                         ),
-                        onPressed: () {
-                          setStateDialog(() {
-                            obscureText = !obscureText;
-                          });
-                        },
                       ),
                     ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(dialogContext);
+                    },
+                    child: const Text('Cancelar'),
+                  ),
+                  ElevatedButton(
+                    onPressed: isVerifying ? null : submitPassword,
+                    child: isVerifying
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Acessar'),
                   ),
                 ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(dialogContext);
-                  },
-                  child: const Text('Cancelar'),
-                ),
-                ElevatedButton(
-                  onPressed: isVerifying
-                      ? null
-                      : () async {
-                          if (passwordController.text.isEmpty) return;
-
-                          setStateDialog(() {
-                            isVerifying = true;
-                            errorMessage = null;
-                          });
-
-                          final result = await ApiService.verifyPassword(
-                            passwordController.text,
-                          );
-
-                          if (!dialogContext.mounted) return;
-
-                          if (result['success'] == true) {
-                            Navigator.pop(dialogContext);
-                            if (!mounted) return;
-                            final settingsResult = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SettingsPage(),
-                              ),
-                            );
-                            if (settingsResult == true) {
-                              _loadSettings();
-                            }
-                          } else {
-                            setStateDialog(() {
-                              isVerifying = false;
-                              errorMessage = result['message'];
-                            });
-                          }
-                        },
-                  child: isVerifying
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Acessar'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+              );
+            },
+          );
+        },
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isDialogVisible = false;
+        });
+      }
+    }
   }
 
   Future<void> _handleCall(String type) async {

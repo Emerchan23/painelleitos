@@ -26,11 +26,23 @@ export async function GET(request: NextRequest) {
     // Se não existe, criar
     if (!roomToken) {
       const newId = uuidv4()
-      await execute(
-        'INSERT INTO room_tokens (id, ward, room) VALUES (?, ?, ?)',
-        [newId, ward, room]
-      )
-      roomToken = { id: newId }
+      try {
+        await execute(
+          'INSERT INTO room_tokens (id, ward, room) VALUES (?, ?, ?)',
+          [newId, ward, room]
+        )
+        roomToken = { id: newId }
+      } catch (insertError: any) {
+        // Se der erro de chave duplicada (outra requisição criou ao mesmo tempo), busca novamente
+        if (insertError.code === 'ER_DUP_ENTRY') {
+           roomToken = await queryOne<{id: string}>(
+            'SELECT id FROM room_tokens WHERE ward = ? AND room = ?',
+            [ward, room]
+          )
+        } else {
+          throw insertError
+        }
+      }
     }
 
     return NextResponse.json<ApiResponse<{ token: string }>>(

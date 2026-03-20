@@ -51,6 +51,7 @@ import {
   User,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   Ban,
   Wrench,
   Download,
@@ -378,11 +379,18 @@ export function AdminDashboard() {
             
             {/* Center Area: Custom Company Info (Logo + Name) */}
             <div className="hidden md:flex items-center justify-center flex-1 mx-4">
-              <div className="flex flex-row items-center justify-center text-center opacity-80 gap-3">
-                {refreshSettings?.logo_url ? (
-                  <img src={refreshSettings.logo_url} alt="Logo" className="h-10 object-contain" />
-                ) : null}
-                <span className="text-lg font-bold tracking-widest uppercase text-muted-foreground">
+              <div className="flex flex-row items-center justify-center text-center opacity-90 gap-4 w-full max-w-xl">
+                {refreshSettings?.logo_url && (
+                  <div className="relative h-14 shrink-0 flex items-center">
+                    <img 
+                      src={refreshSettings.logo_url} 
+                      alt="Logo" 
+                      className="h-full w-auto object-contain max-w-[160px]"
+                      onError={(e) => (e.currentTarget.style.display = 'none')}
+                    />
+                  </div>
+                )}
+                <span className="text-lg lg:text-xl font-black tracking-widest uppercase text-slate-600 dark:text-slate-300 leading-tight">
                   {refreshSettings?.company_name || "HOSPITAL SYSTEM"}
                 </span>
               </div>
@@ -703,6 +711,44 @@ export function AdminDashboard() {
                                   <div className="flex items-center gap-2">
                                     <DoorOpen className="h-4 w-4 text-muted-foreground" />
                                     <h4 className="font-medium">Quarto {room.name}</h4>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      className="h-6 w-6 p-0 text-muted-foreground hover:text-primary"
+                                      onClick={() => {
+                                        // Find first bed to edit the room name
+                                        if (room.beds.length > 0) {
+                                          const bedToEdit = room.beds[0];
+                                          setEditingBed(bedToEdit);
+                                          setFormData({
+                                            number: bedToEdit.number,
+                                            ward: bedToEdit.ward,
+                                            room: bedToEdit.room,
+                                          });
+                                          setIsDialogOpen(true);
+                                        }
+                                      }}
+                                      title="Editar Quarto"
+                                    >
+                                      <Pencil className="h-3 w-3" />
+                                    </Button>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                                      onClick={() => {
+                                        // Confirm deletion of all beds in this room
+                                        if (confirm(`Tem certeza que deseja excluir todos os ${room.beds.length} leitos do quarto ${room.name}? Esta ação não pode ser desfeita.`)) {
+                                          room.beds.forEach(bed => {
+                                            deleteBed(bed.id);
+                                          });
+                                          toast({ title: "Quarto excluído", description: `Todos os leitos do quarto ${room.name} foram excluídos.` });
+                                        }
+                                      }}
+                                      title="Excluir Quarto"
+                                    >
+                                      <Trash2 className="h-3 w-3" />
+                                    </Button>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <Button
@@ -917,6 +963,44 @@ export function AdminDashboard() {
                                   <div className="flex items-center gap-2">
                                     <DoorOpen className="h-4 w-4 text-muted-foreground" />
                                     <h4 className="font-medium">Quarto {room.name} <span className="text-xs text-muted-foreground font-normal">(Ala: {room.beds[0].ward})</span></h4>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      className="h-6 w-6 p-0 text-muted-foreground hover:text-primary"
+                                      onClick={() => {
+                                        // Find first bed to edit the room name
+                                        if (room.beds.length > 0) {
+                                          const bedToEdit = room.beds[0];
+                                          setEditingBed(bedToEdit);
+                                          setFormData({
+                                            number: bedToEdit.number,
+                                            ward: bedToEdit.ward,
+                                            room: bedToEdit.room,
+                                          });
+                                          setIsDialogOpen(true);
+                                        }
+                                      }}
+                                      title="Editar Quarto"
+                                    >
+                                      <Pencil className="h-3 w-3" />
+                                    </Button>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                                      onClick={() => {
+                                        // Confirm deletion of all beds in this room
+                                        if (confirm(`Tem certeza que deseja excluir todos os ${room.beds.length} leitos do quarto ${room.name}? Esta ação não pode ser desfeita.`)) {
+                                          room.beds.forEach(bed => {
+                                            deleteBed(bed.id);
+                                          });
+                                          toast({ title: "Quarto excluído", description: `Todos os leitos do quarto ${room.name} foram excluídos.` });
+                                        }
+                                      }}
+                                      title="Excluir Quarto"
+                                    >
+                                      <Trash2 className="h-3 w-3" />
+                                    </Button>
                                   </div>
                                   <Badge variant="outline" className="text-xs bg-background">
                                     {room.beds.length} {room.beds.length === 1 ? 'leito' : 'leitos'}

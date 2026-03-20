@@ -26,7 +26,7 @@ export function getPool(): mysql.Pool {
 // Função auxiliar para executar queries
 export async function query<T = unknown>(
   sql: string,
-  params?: unknown[]
+  params?: any[]
 ): Promise<T[]> {
   const connection = await getPool().getConnection()
   try {
@@ -40,7 +40,7 @@ export async function query<T = unknown>(
 // Função auxiliar para executar uma query e retornar um único resultado
 export async function queryOne<T = unknown>(
   sql: string,
-  params?: unknown[]
+  params?: any[]
 ): Promise<T | null> {
   const results = await query<T>(sql, params)
   return results.length > 0 ? results[0] : null
@@ -49,7 +49,7 @@ export async function queryOne<T = unknown>(
 // Função auxiliar para inserir e retornar o ID
 export async function insert(
   sql: string,
-  params?: unknown[]
+  params?: any[]
 ): Promise<{ insertId: number; affectedRows: number }> {
   const connection = await getPool().getConnection()
   try {
@@ -67,7 +67,7 @@ export async function insert(
 // Função auxiliar para update/delete
 export async function execute(
   sql: string,
-  params?: unknown[]
+  params?: any[]
 ): Promise<{ affectedRows: number }> {
   const connection = await getPool().getConnection()
   try {
