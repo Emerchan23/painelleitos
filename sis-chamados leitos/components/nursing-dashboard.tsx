@@ -492,7 +492,7 @@ function CallCard({
         {/* Bottom Row: Actions and Status */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t-2 border-border/60">
           {/* Status indicator */}
-          <div className="text-sm font-medium text-muted-foreground flex items-center gap-2 shrink-0">
+          <div className="text-sm font-medium text-muted-foreground flex items-center gap-2 shrink-0 mb-2 sm:mb-0">
             {call.status === "pending" && (
               <><div className="w-2.5 h-2.5 rounded-full bg-emergency animate-pulse" /> Aguardando</>
             )}
@@ -505,25 +505,25 @@ function CallCard({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap w-full sm:w-auto">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             {call.status === "pending" && (
               <>
                 <Button
                   size="default"
                   variant="outline"
                   onClick={() => onSeen(call.id)}
-                  className="h-10 flex-1 px-3 text-xs sm:text-sm font-bold border-2 min-w-[100px]"
+                  className="h-10 flex-1 sm:flex-none px-2 sm:px-3 text-xs font-bold border-2"
                 >
-                  <Eye className="h-4 w-4 mr-1.5 shrink-0" />
-                  <span>Visualizar</span>
+                  <Eye className="h-4 w-4 mr-1 shrink-0" />
+                  <span className="truncate">Visualizar</span>
                 </Button>
                 <Button
                   size="default"
                   onClick={() => onAttend(call.id)}
-                  className="h-10 flex-1 px-3 text-xs sm:text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90 min-w-[100px]"
+                  className="h-10 flex-1 sm:flex-none px-2 sm:px-3 text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  <Play className="h-4 w-4 mr-1.5 shrink-0" />
-                  <span>Atender</span>
+                  <Play className="h-4 w-4 mr-1 shrink-0" />
+                  <span className="truncate">Atender</span>
                 </Button>
               </>
             )}
