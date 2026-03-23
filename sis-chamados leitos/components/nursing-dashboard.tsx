@@ -231,16 +231,18 @@ export function NursingDashboard() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 w-full px-4 py-4 overflow-hidden flex flex-col min-h-0">
-        <div className="flex flex-col xl:flex-row gap-6 h-full min-h-0">
+      <main className="flex-1 w-full overflow-hidden flex flex-col min-h-0 bg-muted/30">
+        <div className="flex flex-col xl:flex-row h-full min-h-0">
           {/* Active Calls List - Takes most space */}
-          <div className="flex-1 flex flex-col min-h-0 pr-2">
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3 bg-background py-3 z-10 border-b border-border mb-4 shrink-0">
-              <Clock className="h-7 w-7 text-primary" />
-              Chamados Ativos
-            </h2>
+          <div className="flex-1 flex flex-col min-h-0">
+            <div className="px-6 py-4 bg-background border-b border-border shadow-sm z-10 shrink-0">
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
+                <Clock className="h-7 w-7 text-primary" />
+                Chamados Ativos
+              </h2>
+            </div>
             
-            <div className="flex-1 overflow-y-auto min-h-0 pb-4 pr-2">
+            <div className="flex-1 overflow-y-auto min-h-0 p-6">
               {activeCalls.length === 0 ? (
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-24 text-center">
@@ -267,16 +269,16 @@ export function NursingDashboard() {
           </div>
 
           {/* Sidebar - Compact */}
-          <div className="w-full xl:w-[350px] 2xl:w-[400px] border-t xl:border-t-0 xl:border-l pt-6 xl:pt-0 xl:pl-6 border-border/50 flex flex-col shrink-0 min-h-0 overflow-y-auto">
+          <div className="w-full xl:w-[380px] 2xl:w-[450px] bg-background border-t xl:border-t-0 xl:border-l border-border flex flex-col shrink-0 min-h-0">
             {/* Recent Completed */}
-            <Card className="shadow-sm border-border/50">
-              <CardHeader className="py-4 px-5 bg-muted/10 border-b border-border/50">
-                <CardTitle className="text-lg font-bold flex items-center gap-2.5 text-foreground/90">
-                  <CheckCircle2 className="h-5 w-5 text-success" />
+            <div className="flex flex-col h-full">
+              <div className="py-4 px-6 bg-muted/10 border-b border-border shadow-sm shrink-0">
+                <h3 className="text-xl font-bold flex items-center gap-2.5 text-foreground/90">
+                  <CheckCircle2 className="h-6 w-6 text-success" />
                   Finalizados Recentes
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
+                </h3>
+              </div>
+              <div className="flex-1 overflow-y-auto min-h-0 p-0">
                 {completedCalls.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8 font-medium">
                     Nenhum chamado finalizado
@@ -315,8 +317,8 @@ export function NursingDashboard() {
                     ))}
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </main>
