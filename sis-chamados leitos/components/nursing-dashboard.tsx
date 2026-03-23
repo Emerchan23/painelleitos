@@ -250,7 +250,7 @@ export function NursingDashboard() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-6">
                   {activeCalls.map((call) => (
                     <CallCard 
                       key={call.id} 
@@ -430,7 +430,7 @@ function CallCard({
 
   return (
     <Card className={cn(
-      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col min-h-[300px]",
+      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col min-h-[310px]",
       "border-l-[12px]",
       call.priority === "emergency" && "border-l-emergency shadow-emergency/10",
       call.priority === "urgent" && "border-l-urgent",
@@ -492,7 +492,7 @@ function CallCard({
         {/* Bottom Row: Actions and Status */}
         <div className="flex flex-col gap-3 pt-4 border-t-2 border-border/60 mt-auto">
           {/* Status indicator */}
-          <div className="text-sm font-medium text-muted-foreground flex items-center justify-center sm:justify-start gap-2 shrink-0">
+          <div className="text-sm font-medium text-muted-foreground flex items-center justify-center gap-2 shrink-0">
             {call.status === "pending" && (
               <><div className="w-2.5 h-2.5 rounded-full bg-emergency animate-pulse" /> Aguardando</>
             )}
@@ -512,17 +512,17 @@ function CallCard({
                   size="default"
                   variant="outline"
                   onClick={() => onSeen(call.id)}
-                  className="h-11 flex-1 px-1 text-xs sm:text-sm font-bold border-2"
+                  className="h-12 flex-1 px-2 text-sm font-bold border-2"
                 >
-                  <Eye className="h-4 w-4 mr-1 shrink-0" />
+                  <Eye className="h-4 w-4 mr-1.5 shrink-0" />
                   <span className="truncate">Visualizar</span>
                 </Button>
                 <Button
                   size="default"
                   onClick={() => onAttend(call.id)}
-                  className="h-11 flex-1 px-1 text-xs sm:text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="h-12 flex-1 px-2 text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  <Play className="h-4 w-4 mr-1 shrink-0" />
+                  <Play className="h-4 w-4 mr-1.5 shrink-0" />
                   <span className="truncate">Atender</span>
                 </Button>
               </>
@@ -531,7 +531,7 @@ function CallCard({
               <Button
                 size="default"
                 onClick={() => onAttend(call.id)}
-                className="h-11 w-full px-6 text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                className="h-12 w-full px-6 text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 <Play className="h-4 w-4 mr-2 shrink-0" />
                 Atender
@@ -541,7 +541,7 @@ function CallCard({
               <Button
                 size="default"
                 onClick={() => onComplete(call.id)}
-                className="h-11 w-full px-6 text-sm font-bold bg-success text-success-foreground hover:bg-success/90"
+                className="h-12 w-full px-6 text-sm font-bold bg-success text-success-foreground hover:bg-success/90"
               >
                 <CheckCircle2 className="h-4 w-4 mr-2 shrink-0" />
                 Finalizar
