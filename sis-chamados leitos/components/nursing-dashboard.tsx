@@ -242,7 +242,7 @@ export function NursingDashboard() {
               </h2>
             </div>
             
-            <div className="absolute inset-0 top-[73px] bottom-0 overflow-y-auto p-6 scrollbar-hide pb-24">
+            <div className="absolute inset-0 top-[73px] bottom-0 overflow-y-auto p-6 scrollbar-hide pb-32">
               {activeCalls.length === 0 ? (
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-24 text-center">
@@ -278,7 +278,7 @@ export function NursingDashboard() {
                   Finalizados Recentes
                 </h3>
               </div>
-              <div className="absolute inset-0 top-[61px] bottom-0 overflow-y-auto p-0 scrollbar-hide pb-24">
+              <div className="absolute inset-0 top-[61px] bottom-0 overflow-y-auto p-0 scrollbar-hide pb-32">
                 {completedCalls.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8 font-medium">
                     Nenhum chamado finalizado
