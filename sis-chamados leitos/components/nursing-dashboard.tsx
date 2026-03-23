@@ -145,10 +145,10 @@ export function NursingDashboard() {
   }
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-background flex flex-col">
+    <div ref={containerRef} className="h-screen max-h-screen bg-background flex flex-col overflow-hidden">
       {/* Header - Compact for TV */}
-      <header className="bg-card border-b border-border sticky top-0 z-40 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
+      <header className="bg-card border-b border-border sticky top-0 z-40 shadow-sm w-full">
+        <div className="w-full px-4 py-4">
           <div className="flex items-center justify-between">
             {/* Left Area: Title & Navigation */}
             <div className="flex items-center gap-4 w-auto shrink-0">
@@ -218,8 +218,8 @@ export function NursingDashboard() {
       </header>
 
       {/* Stats Bar - Large for TV visibility */}
-      <div className="bg-card border-b border-border shadow-sm z-30 relative">
-        <div className="container mx-auto px-4 py-6">
+      <div className="bg-card border-b border-border shadow-sm z-30 relative w-full">
+        <div className="w-full px-4 py-6">
           <div className="flex items-center gap-10">
             <StatBadge label="Total Ativos" value={stats.total} large />
             <div className="h-10 w-px bg-border"></div>
@@ -231,41 +231,43 @@ export function NursingDashboard() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-[1920px]">
-        <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-8 h-full">
+      <main className="flex-1 w-full px-4 py-4 overflow-hidden flex flex-col">
+        <div className="flex flex-col xl:flex-row gap-6 h-full min-h-0">
           {/* Active Calls List - Takes most space */}
-          <div className="lg:col-span-3 xl:col-span-4 space-y-6 overflow-y-auto pr-2">
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3 sticky top-0 bg-background py-4 z-10 border-b border-border mb-4">
+          <div className="flex-1 flex flex-col min-h-0 pr-2">
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3 bg-background py-3 z-10 border-b border-border mb-4 shrink-0">
               <Clock className="h-7 w-7 text-primary" />
               Chamados Ativos
             </h2>
             
-            {activeCalls.length === 0 ? (
-              <Card className="border-2 border-dashed">
-                <CardContent className="py-24 text-center">
-                  <CheckCircle2 className="h-20 w-20 text-success mx-auto mb-6" />
-                  <p className="text-3xl font-bold text-foreground">Nenhum chamado pendente</p>
-                  <p className="text-xl text-muted-foreground mt-3">Todos os pacientes foram atendidos</p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
-                {activeCalls.map((call) => (
-                  <CallCard 
-                    key={call.id} 
-                    call={call} 
-                    now={now} 
-                    onSeen={markAsSeen} 
-                    onAttend={attendCall} 
-                    onComplete={completeCall} 
-                  />
-                ))}
-              </div>
-            )}
+            <div className="flex-1 overflow-y-auto min-h-0 pb-4">
+              {activeCalls.length === 0 ? (
+                <Card className="border-2 border-dashed">
+                  <CardContent className="py-24 text-center">
+                    <CheckCircle2 className="h-20 w-20 text-success mx-auto mb-6" />
+                    <p className="text-3xl font-bold text-foreground">Nenhum chamado pendente</p>
+                    <p className="text-xl text-muted-foreground mt-3">Todos os pacientes foram atendidos</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-6">
+                  {activeCalls.map((call) => (
+                    <CallCard 
+                      key={call.id} 
+                      call={call} 
+                      now={now} 
+                      onSeen={markAsSeen} 
+                      onAttend={attendCall} 
+                      onComplete={completeCall} 
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Sidebar - Compact */}
-          <div className="lg:col-span-1 border-l pl-4 border-border/50 flex flex-col">
+          <div className="w-full xl:w-[350px] 2xl:w-[400px] border-t xl:border-t-0 xl:border-l pt-6 xl:pt-0 xl:pl-6 border-border/50 flex flex-col shrink-0">
             {/* Recent Completed */}
             <Card className="shadow-sm border-border/50">
               <CardHeader className="py-4 px-5 bg-muted/10 border-b border-border/50">
@@ -438,30 +440,22 @@ function CallCard({
       isPending && call.priority === "routine" && "animate-blink-routine bg-routine/5"
     )}>
       <CardContent className="p-6 flex flex-col h-full flex-1">
-        {/* Top Row: Room Info (Full Width) */}
-        <div className="flex items-center gap-4 mb-4">
-          <div className={cn("p-4 rounded-2xl shrink-0", priorityConfig.className)}>
-            <Icon className="h-10 w-10" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-4xl sm:text-5xl font-black text-foreground tracking-tight leading-none" title={call.room || call.patientName || 'Quarto'}>
-              {call.room || call.patientName || 'Quarto'}
-            </h3>
-          </div>
-          {/* Timer moved to Top Right */}
-          <div className={cn(
-            "flex items-center gap-2 text-2xl font-mono font-black shrink-0 px-3 py-2 rounded-xl shadow-inner transition-colors duration-500",
-            timerColorClass
-          )}>
-            <Clock className="h-5 w-5" />
-            <span>
-              {minutes > 0 ? `${minutes}m ` : ''}{String(seconds).padStart(2, "0")}s
-            </span>
+        {/* Top Row: Room Info and Timer */}
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="flex items-start gap-4 flex-1 min-w-0">
+            <div className={cn("p-4 rounded-2xl shrink-0", priorityConfig.className)}>
+              <Icon className="h-10 w-10" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-4xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-none break-words whitespace-normal" title={call.room || call.patientName || 'Quarto'}>
+                {call.room || call.patientName || 'Quarto'}
+              </h3>
+            </div>
           </div>
         </div>
 
         {/* Middle Row: Details */}
-        <div className="flex items-start justify-between gap-4 mb-6">
+        <div className="flex items-center justify-between gap-4 mb-6">
           <div className="flex flex-col gap-1.5 flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
               {call.bedNumber && call.bedNumber !== call.room && call.bedNumber !== call.patientName && (
@@ -470,6 +464,16 @@ function CallCard({
               <Badge variant="outline" className={cn("text-sm px-2.5 py-0.5 font-bold", priorityConfig.className)}>
                 {priorityConfig.label}
               </Badge>
+              {/* Timer moved next to Routine/Urgent badge */}
+              <div className={cn(
+                "flex items-center gap-1.5 text-lg font-mono font-bold shrink-0 px-2.5 py-0.5 rounded-md transition-colors duration-500",
+                timerColorClass
+              )}>
+                <Clock className="h-4 w-4" />
+                <span>
+                  {minutes > 0 ? `${minutes}m ` : ''}{String(seconds).padStart(2, "0")}s
+                </span>
+              </div>
             </div>
             
             <p className="text-xl font-bold text-foreground opacity-90 leading-tight truncate">{getCallTypeLabel(call.callType)}</p>
