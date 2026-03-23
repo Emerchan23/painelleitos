@@ -432,7 +432,7 @@ function CallCard({
 
   return (
     <Card className={cn(
-      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col h-[280px] min-h-[280px]",
+      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col h-[300px] min-h-[300px]",
       "border-l-[12px]",
       call.priority === "emergency" && "border-l-emergency shadow-emergency/10",
       call.priority === "urgent" && "border-l-urgent",
