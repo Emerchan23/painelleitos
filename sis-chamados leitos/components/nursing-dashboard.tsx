@@ -234,15 +234,15 @@ export function NursingDashboard() {
       <main className="flex-1 w-full overflow-hidden flex flex-col min-h-0 bg-muted/30">
         <div className="flex flex-col xl:flex-row h-full min-h-0">
           {/* Active Calls List - Takes most space */}
-          <div className="flex-1 flex flex-col min-h-0 relative">
-            <div className="px-6 py-4 bg-background border-b border-border shadow-sm z-10 shrink-0">
+          <div className="flex-1 flex flex-col h-full min-h-0 relative">
+            <div className="px-6 py-4 bg-background border-b border-border shadow-sm z-10 shrink-0 absolute top-0 left-0 right-0 h-[73px]">
               <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
                 <Clock className="h-7 w-7 text-primary" />
                 Chamados Ativos
               </h2>
             </div>
             
-            <div className="absolute inset-0 top-[73px] overflow-y-auto p-6">
+            <div className="absolute inset-0 top-[73px] overflow-y-auto p-6 scrollbar-hide">
               {activeCalls.length === 0 ? (
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-24 text-center">
@@ -269,16 +269,16 @@ export function NursingDashboard() {
           </div>
 
           {/* Sidebar - Compact */}
-          <div className="w-full xl:w-[380px] 2xl:w-[450px] bg-background border-t xl:border-t-0 xl:border-l border-border flex flex-col shrink-0 min-h-0 relative">
+          <div className="w-full xl:w-[380px] 2xl:w-[450px] bg-background border-t xl:border-t-0 xl:border-l border-border flex flex-col shrink-0 h-full min-h-0 relative">
             {/* Recent Completed */}
-            <div className="flex flex-col h-full">
-              <div className="py-4 px-6 bg-muted/10 border-b border-border shadow-sm shrink-0">
+            <div className="flex flex-col h-full relative">
+              <div className="py-4 px-6 bg-muted/10 border-b border-border shadow-sm shrink-0 absolute top-0 left-0 right-0 h-[61px] z-10">
                 <h3 className="text-xl font-bold flex items-center gap-2.5 text-foreground/90">
                   <CheckCircle2 className="h-6 w-6 text-success" />
                   Finalizados Recentes
                 </h3>
               </div>
-              <div className="absolute inset-0 top-[61px] overflow-y-auto p-0">
+              <div className="absolute inset-0 top-[61px] overflow-y-auto p-0 scrollbar-hide">
                 {completedCalls.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8 font-medium">
                     Nenhum chamado finalizado
