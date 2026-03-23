@@ -438,43 +438,44 @@ function CallCard({
       isPending && call.priority === "routine" && "animate-blink-routine bg-routine/5"
     )}>
       <CardContent className="p-6 flex flex-col h-full flex-1">
-        {/* Top Row: Info and Timer */}
-        <div className="flex items-start justify-between gap-4 mb-6">
-          {/* Left: Icon and Info */}
-          <div className="flex items-start gap-4">
-            <div className={cn("p-4 rounded-2xl shrink-0", priorityConfig.className)}>
-              <Icon className="h-10 w-10" />
-            </div>
-            <div className="min-w-0 py-1 flex flex-col gap-0.5">
-              <h3 className="text-4xl sm:text-5xl font-black text-foreground tracking-tight leading-none mb-1">
-                {call.room || call.patientName || 'Quarto'}
-              </h3>
-              
-              <div className="flex items-center gap-3 mb-1 flex-wrap">
-                {call.bedNumber && call.bedNumber !== call.room && call.bedNumber !== call.patientName && (
-                  <span className="text-lg sm:text-xl font-bold text-muted-foreground">Leito {call.bedNumber}</span>
-                )}
-                <Badge variant="outline" className={cn("text-xs sm:text-sm px-2 py-0.5 font-bold", priorityConfig.className)}>
-                  {priorityConfig.label}
-                </Badge>
-              </div>
-              
-              <p className="text-lg sm:text-xl font-bold text-foreground opacity-90 leading-tight">{getCallTypeLabel(call.callType)}</p>
-              {call.ward && (
-                <p className="text-xs sm:text-sm font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{call.ward}</p>
-              )}
-            </div>
+        {/* Top Row: Room Info (Full Width) */}
+        <div className="flex items-center gap-4 mb-4">
+          <div className={cn("p-4 rounded-2xl shrink-0", priorityConfig.className)}>
+            <Icon className="h-10 w-10" />
           </div>
-
-          {/* Right: Timer */}
+          <div className="min-w-0 flex-1">
+            <h3 className="text-4xl sm:text-5xl font-black text-foreground tracking-tight leading-none" title={call.room || call.patientName || 'Quarto'}>
+              {call.room || call.patientName || 'Quarto'}
+            </h3>
+          </div>
+          {/* Timer moved to Top Right */}
           <div className={cn(
-            "flex items-center gap-2 text-3xl font-mono font-black shrink-0 px-4 py-3 rounded-xl shadow-inner transition-colors duration-500",
+            "flex items-center gap-2 text-2xl font-mono font-black shrink-0 px-3 py-2 rounded-xl shadow-inner transition-colors duration-500",
             timerColorClass
           )}>
-            <Clock className="h-6 w-6" />
+            <Clock className="h-5 w-5" />
             <span>
               {minutes > 0 ? `${minutes}m ` : ''}{String(seconds).padStart(2, "0")}s
             </span>
+          </div>
+        </div>
+
+        {/* Middle Row: Details */}
+        <div className="flex items-start justify-between gap-4 mb-6">
+          <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+            <div className="flex items-center gap-3 flex-wrap">
+              {call.bedNumber && call.bedNumber !== call.room && call.bedNumber !== call.patientName && (
+                <span className="text-xl font-bold text-muted-foreground">Leito {call.bedNumber}</span>
+              )}
+              <Badge variant="outline" className={cn("text-sm px-2.5 py-0.5 font-bold", priorityConfig.className)}>
+                {priorityConfig.label}
+              </Badge>
+            </div>
+            
+            <p className="text-xl font-bold text-foreground opacity-90 leading-tight truncate">{getCallTypeLabel(call.callType)}</p>
+            {call.ward && (
+              <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest break-words whitespace-normal">{call.ward}</p>
+            )}
           </div>
         </div>
 
