@@ -145,7 +145,7 @@ export function NursingDashboard() {
   }
 
   return (
-    <div ref={containerRef} className="h-screen bg-background flex flex-col overflow-hidden">
+    <div ref={containerRef} className="fixed inset-0 bg-background flex flex-col overflow-hidden">
       {/* Header - Compact for TV */}
       <header className="bg-card border-b border-border sticky top-0 z-40 shadow-sm w-full">
         <div className="w-full px-4 py-4">
@@ -234,7 +234,7 @@ export function NursingDashboard() {
       <main className="flex-1 w-full overflow-hidden flex flex-col min-h-0 bg-muted/30">
         <div className="flex flex-col xl:flex-row h-full min-h-0">
           {/* Active Calls List - Takes most space */}
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 flex flex-col min-h-0 relative">
             <div className="px-6 py-4 bg-background border-b border-border shadow-sm z-10 shrink-0">
               <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
                 <Clock className="h-7 w-7 text-primary" />
@@ -242,7 +242,7 @@ export function NursingDashboard() {
               </h2>
             </div>
             
-            <div className="flex-1 overflow-y-auto min-h-0 p-6">
+            <div className="absolute inset-0 top-[73px] overflow-y-auto p-6">
               {activeCalls.length === 0 ? (
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-24 text-center">
@@ -252,7 +252,7 @@ export function NursingDashboard() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-6 pb-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-6">
                   {activeCalls.map((call) => (
                     <CallCard 
                       key={call.id} 
@@ -269,7 +269,7 @@ export function NursingDashboard() {
           </div>
 
           {/* Sidebar - Compact */}
-          <div className="w-full xl:w-[380px] 2xl:w-[450px] bg-background border-t xl:border-t-0 xl:border-l border-border flex flex-col shrink-0 min-h-0">
+          <div className="w-full xl:w-[380px] 2xl:w-[450px] bg-background border-t xl:border-t-0 xl:border-l border-border flex flex-col shrink-0 min-h-0 relative">
             {/* Recent Completed */}
             <div className="flex flex-col h-full">
               <div className="py-4 px-6 bg-muted/10 border-b border-border shadow-sm shrink-0">
@@ -278,7 +278,7 @@ export function NursingDashboard() {
                   Finalizados Recentes
                 </h3>
               </div>
-              <div className="flex-1 overflow-y-auto min-h-0 p-0">
+              <div className="absolute inset-0 top-[61px] overflow-y-auto p-0">
                 {completedCalls.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8 font-medium">
                     Nenhum chamado finalizado
@@ -432,7 +432,7 @@ function CallCard({
 
   return (
     <Card className={cn(
-      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col h-[320px] max-h-[320px]",
+      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col min-h-[310px]",
       "border-l-[12px]",
       call.priority === "emergency" && "border-l-emergency shadow-emergency/10",
       call.priority === "urgent" && "border-l-urgent",
@@ -444,7 +444,7 @@ function CallCard({
     )}>
       <CardContent className="p-6 flex flex-col h-full flex-1">
         {/* Top Row: Room Info and Timer */}
-        <div className="flex items-start justify-between gap-4 mb-2 shrink-0">
+        <div className="flex items-start justify-between gap-4 mb-3">
           <div className="flex items-start gap-4 flex-1 min-w-0">
             <div className={cn("p-4 rounded-2xl shrink-0", priorityConfig.className)}>
               <Icon className="h-10 w-10" />
@@ -458,8 +458,8 @@ function CallCard({
         </div>
 
         {/* Middle Row: Details */}
-        <div className="flex items-end justify-between gap-4 mb-3 flex-1 min-h-0">
-          <div className="flex flex-col gap-1.5 flex-1 min-w-0 overflow-hidden">
+        <div className="flex items-end justify-between gap-4 mb-4 flex-1">
+          <div className="flex flex-col gap-1.5 flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               {call.bedNumber && call.bedNumber !== call.room && call.bedNumber !== call.patientName && (
                 <span className="text-lg font-bold text-muted-foreground">Leito {call.bedNumber}</span>
@@ -492,7 +492,7 @@ function CallCard({
         <div className="mt-auto"></div>
 
         {/* Bottom Row: Actions and Status */}
-        <div className="flex flex-col gap-3 pt-3 border-t-2 border-border/60 mt-auto shrink-0">
+        <div className="flex flex-col gap-3 pt-4 border-t-2 border-border/60 mt-auto">
           {/* Status indicator */}
           <div className="text-sm font-medium text-muted-foreground flex items-center justify-center gap-2 shrink-0">
             {call.status === "pending" && (
