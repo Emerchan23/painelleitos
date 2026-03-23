@@ -145,7 +145,7 @@ export function NursingDashboard() {
   }
 
   return (
-    <div ref={containerRef} className="h-screen max-h-screen bg-background flex flex-col overflow-hidden">
+    <div ref={containerRef} className="h-screen bg-background flex flex-col overflow-hidden">
       {/* Header - Compact for TV */}
       <header className="bg-card border-b border-border sticky top-0 z-40 shadow-sm w-full">
         <div className="w-full px-4 py-4">
@@ -231,7 +231,7 @@ export function NursingDashboard() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 w-full px-4 py-4 overflow-hidden flex flex-col">
+      <main className="flex-1 w-full px-4 py-4 overflow-hidden flex flex-col min-h-0">
         <div className="flex flex-col xl:flex-row gap-6 h-full min-h-0">
           {/* Active Calls List - Takes most space */}
           <div className="flex-1 flex flex-col min-h-0 pr-2">
@@ -240,7 +240,7 @@ export function NursingDashboard() {
               Chamados Ativos
             </h2>
             
-            <div className="flex-1 overflow-y-auto min-h-0 pb-4">
+            <div className="flex-1 overflow-y-auto min-h-0 pb-4 pr-2">
               {activeCalls.length === 0 ? (
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-24 text-center">
@@ -267,7 +267,7 @@ export function NursingDashboard() {
           </div>
 
           {/* Sidebar - Compact */}
-          <div className="w-full xl:w-[350px] 2xl:w-[400px] border-t xl:border-t-0 xl:border-l pt-6 xl:pt-0 xl:pl-6 border-border/50 flex flex-col shrink-0">
+          <div className="w-full xl:w-[350px] 2xl:w-[400px] border-t xl:border-t-0 xl:border-l pt-6 xl:pt-0 xl:pl-6 border-border/50 flex flex-col shrink-0 min-h-0 overflow-y-auto">
             {/* Recent Completed */}
             <Card className="shadow-sm border-border/50">
               <CardHeader className="py-4 px-5 bg-muted/10 border-b border-border/50">
