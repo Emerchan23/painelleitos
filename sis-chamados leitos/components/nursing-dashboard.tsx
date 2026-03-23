@@ -430,7 +430,7 @@ function CallCard({
 
   return (
     <Card className={cn(
-      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col min-h-[260px]",
+      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col min-h-[270px]",
       "border-l-[12px]",
       call.priority === "emergency" && "border-l-emergency shadow-emergency/10",
       call.priority === "urgent" && "border-l-urgent",
@@ -512,18 +512,18 @@ function CallCard({
                   size="default"
                   variant="outline"
                   onClick={() => onSeen(call.id)}
-                  className="h-10 flex-1 sm:flex-none px-3 text-xs font-bold border-2"
+                  className="h-10 flex-1 px-3 text-xs sm:text-sm font-bold border-2 min-w-[100px]"
                 >
                   <Eye className="h-4 w-4 mr-1.5 shrink-0" />
-                  <span className="truncate">Visualizar</span>
+                  <span>Visualizar</span>
                 </Button>
                 <Button
                   size="default"
                   onClick={() => onAttend(call.id)}
-                  className="h-10 flex-1 sm:flex-none px-3 text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="h-10 flex-1 px-3 text-xs sm:text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90 min-w-[100px]"
                 >
                   <Play className="h-4 w-4 mr-1.5 shrink-0" />
-                  <span className="truncate">Atender</span>
+                  <span>Atender</span>
                 </Button>
               </>
             )}
@@ -531,7 +531,7 @@ function CallCard({
               <Button
                 size="default"
                 onClick={() => onAttend(call.id)}
-                className="h-10 w-full sm:w-auto px-4 text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                className="h-10 w-full sm:w-auto px-6 text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 <Play className="h-4 w-4 mr-2 shrink-0" />
                 Atender
@@ -541,7 +541,7 @@ function CallCard({
               <Button
                 size="default"
                 onClick={() => onComplete(call.id)}
-                className="h-10 w-full sm:w-auto px-4 text-sm font-bold bg-success text-success-foreground hover:bg-success/90"
+                className="h-10 w-full sm:w-auto px-6 text-sm font-bold bg-success text-success-foreground hover:bg-success/90"
               >
                 <CheckCircle2 className="h-4 w-4 mr-2 shrink-0" />
                 Finalizar
