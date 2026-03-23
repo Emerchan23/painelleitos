@@ -430,8 +430,9 @@ function CallCard({
 
   return (
     <Card className={cn(
-      "transition-all border-l-8 shadow-md hover:shadow-lg flex flex-col h-full",
-      call.priority === "emergency" && "border-l-emergency",
+      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col min-h-[260px]",
+      "border-l-[12px]",
+      call.priority === "emergency" && "border-l-emergency shadow-emergency/10",
       call.priority === "urgent" && "border-l-urgent",
       call.priority === "routine" && "border-l-routine",
       // Efeito piscando para chamados pendentes baseado na prioridade
@@ -441,13 +442,13 @@ function CallCard({
     )}>
       <CardContent className="p-6 flex flex-col h-full flex-1">
         {/* Top Row: Room Info and Timer */}
-        <div className="flex items-start justify-between gap-4 mb-4">
+        <div className="flex items-start justify-between gap-4 mb-3">
           <div className="flex items-start gap-4 flex-1 min-w-0">
             <div className={cn("p-4 rounded-2xl shrink-0", priorityConfig.className)}>
               <Icon className="h-10 w-10" />
             </div>
-            <div className="flex-1 min-w-0 flex items-center h-16">
-              <h3 className="text-4xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-none break-words whitespace-normal" title={call.room || call.patientName || 'Quarto'}>
+            <div className="flex-1 min-w-0 flex items-center min-h-[4rem]">
+              <h3 className="text-4xl sm:text-5xl lg:text-5xl font-black text-foreground tracking-tight leading-none break-words whitespace-normal line-clamp-2" title={call.room || call.patientName || 'Quarto'}>
                 {call.room || call.patientName || 'Quarto'}
               </h3>
             </div>
@@ -455,40 +456,43 @@ function CallCard({
         </div>
 
         {/* Middle Row: Details */}
-        <div className="flex items-center justify-between gap-4 mb-6">
+        <div className="flex items-end justify-between gap-4 mb-4 flex-1">
           <div className="flex flex-col gap-1.5 flex-1 min-w-0">
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap">
               {call.bedNumber && call.bedNumber !== call.room && call.bedNumber !== call.patientName && (
-                <span className="text-xl font-bold text-muted-foreground">Leito {call.bedNumber}</span>
+                <span className="text-lg font-bold text-muted-foreground">Leito {call.bedNumber}</span>
               )}
-              <Badge variant="outline" className={cn("text-sm px-2.5 py-0.5 font-bold", priorityConfig.className)}>
+              <Badge variant="outline" className={cn("text-xs px-2 py-0.5 font-bold", priorityConfig.className)}>
                 {priorityConfig.label}
               </Badge>
-              {/* Timer moved next to Routine/Urgent badge */}
-              <div className={cn(
-                "flex items-center gap-1.5 text-lg font-mono font-bold shrink-0 px-2.5 py-0.5 rounded-md transition-colors duration-500",
-                timerColorClass
-              )}>
-                <Clock className="h-4 w-4" />
-                <span>
-                  {minutes > 0 ? `${minutes}m ` : ''}{String(seconds).padStart(2, "0")}s
-                </span>
-              </div>
             </div>
             
-            <p className="text-xl font-bold text-foreground opacity-90 leading-tight truncate">{getCallTypeLabel(call.callType)}</p>
+            <p className="text-lg font-bold text-foreground opacity-90 leading-tight truncate">{getCallTypeLabel(call.callType)}</p>
             {call.ward && (
-              <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest break-words whitespace-normal">{call.ward}</p>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest break-words whitespace-normal line-clamp-1">{call.ward}</p>
             )}
+          </div>
+          
+          {/* Timer on the right side */}
+          <div className={cn(
+            "flex flex-col items-center justify-center shrink-0 px-2 py-1.5 rounded-lg shadow-inner transition-colors duration-500 min-w-[90px]",
+            timerColorClass
+          )}>
+            <div className="flex items-center gap-1 text-base font-mono font-bold">
+              <Clock className="h-3.5 w-3.5" />
+              <span>
+                {minutes > 0 ? `${minutes}m ` : ''}{String(seconds).padStart(2, "0")}s
+              </span>
+            </div>
           </div>
         </div>
 
         <div className="mt-auto"></div>
 
         {/* Bottom Row: Actions and Status */}
-        <div className="flex items-center justify-between gap-4 pt-5 border-t-2 border-border/60">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t-2 border-border/60">
           {/* Status indicator */}
-          <div className="text-base font-medium text-muted-foreground flex items-center gap-2">
+          <div className="text-sm font-medium text-muted-foreground flex items-center gap-2 shrink-0">
             {call.status === "pending" && (
               <><div className="w-2.5 h-2.5 rounded-full bg-emergency animate-pulse" /> Aguardando</>
             )}
@@ -501,25 +505,25 @@ function CallCard({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap w-full sm:w-auto">
             {call.status === "pending" && (
               <>
                 <Button
                   size="default"
                   variant="outline"
                   onClick={() => onSeen(call.id)}
-                  className="h-12 px-5 text-base font-bold border-2"
+                  className="h-10 flex-1 sm:flex-none px-3 text-xs font-bold border-2"
                 >
-                  <Eye className="h-5 w-5 mr-2" />
-                  Visualizar
+                  <Eye className="h-4 w-4 mr-1.5 shrink-0" />
+                  <span className="truncate">Visualizar</span>
                 </Button>
                 <Button
                   size="default"
                   onClick={() => onAttend(call.id)}
-                  className="h-12 px-6 text-base font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="h-10 flex-1 sm:flex-none px-3 text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  <Play className="h-5 w-5 mr-2" />
-                  Atender
+                  <Play className="h-4 w-4 mr-1.5 shrink-0" />
+                  <span className="truncate">Atender</span>
                 </Button>
               </>
             )}
@@ -527,9 +531,9 @@ function CallCard({
               <Button
                 size="default"
                 onClick={() => onAttend(call.id)}
-                className="h-12 px-6 text-base font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                className="h-10 w-full sm:w-auto px-4 text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                <Play className="h-5 w-5 mr-2" />
+                <Play className="h-4 w-4 mr-2 shrink-0" />
                 Atender
               </Button>
             )}
@@ -537,9 +541,9 @@ function CallCard({
               <Button
                 size="default"
                 onClick={() => onComplete(call.id)}
-                className="h-12 px-6 text-base font-bold bg-success text-success-foreground hover:bg-success/90"
+                className="h-10 w-full sm:w-auto px-4 text-sm font-bold bg-success text-success-foreground hover:bg-success/90"
               >
-                <CheckCircle2 className="h-5 w-5 mr-2" />
+                <CheckCircle2 className="h-4 w-4 mr-2 shrink-0" />
                 Finalizar
               </Button>
             )}
