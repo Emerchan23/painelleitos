@@ -250,7 +250,7 @@ export function NursingDashboard() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-6">
                   {activeCalls.map((call) => (
                     <CallCard 
                       key={call.id} 
@@ -446,7 +446,7 @@ function CallCard({
             <div className={cn("p-4 rounded-2xl shrink-0", priorityConfig.className)}>
               <Icon className="h-10 w-10" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 flex items-center h-16">
               <h3 className="text-4xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-none break-words whitespace-normal" title={call.room || call.patientName || 'Quarto'}>
                 {call.room || call.patientName || 'Quarto'}
               </h3>
