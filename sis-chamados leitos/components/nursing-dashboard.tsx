@@ -432,7 +432,7 @@ function CallCard({
 
   return (
     <Card className={cn(
-      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col h-[300px] min-h-[300px]",
+      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col h-[280px] min-h-[280px]",
       "border-l-[12px]",
       call.priority === "emergency" && "border-l-emergency shadow-emergency/10",
       call.priority === "urgent" && "border-l-urgent",
@@ -444,7 +444,7 @@ function CallCard({
     )}>
       <CardContent className="p-6 flex flex-col h-full flex-1">
         {/* Top Row: Room Info and Timer */}
-        <div className="flex items-start justify-between gap-4 mb-3">
+        <div className="flex items-start justify-between gap-4 mb-2">
           <div className="flex items-start gap-3 flex-1 min-w-0">
             <div className={cn("p-3 rounded-2xl shrink-0", priorityConfig.className)}>
               <Icon className="h-8 w-8" />
@@ -458,7 +458,7 @@ function CallCard({
         </div>
 
         {/* Middle Row: Details */}
-        <div className="flex items-end justify-between gap-3 mb-3 flex-1">
+        <div className="flex items-end justify-between gap-3 mb-2 flex-1">
           <div className="flex flex-col gap-1.5 flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               {call.bedNumber && call.bedNumber !== call.room && call.bedNumber !== call.patientName && (
@@ -492,7 +492,7 @@ function CallCard({
         <div className="mt-auto"></div>
 
         {/* Bottom Row: Actions and Status */}
-        <div className="flex flex-col gap-3 pt-4 border-t-2 border-border/60 mt-auto">
+        <div className="flex flex-col gap-3 pt-3 border-t-2 border-border/60 mt-auto">
           {/* Status indicator */}
           <div className="text-sm font-medium text-muted-foreground flex items-center justify-center gap-2 shrink-0">
             {call.status === "pending" && (
