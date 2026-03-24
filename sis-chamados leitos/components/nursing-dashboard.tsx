@@ -302,14 +302,14 @@ export function NursingDashboard() {
         </Panel>
 
         {isLayoutUnlocked && (
-          <PanelResizeHandle className="h-2 bg-blue-500/50 hover:bg-blue-600 active:bg-blue-700 transition-colors cursor-row-resize z-50 flex items-center justify-center">
+          <PanelResizeHandle className="h-2 bg-blue-500/50 hover:bg-blue-600 active:bg-blue-700 transition-colors cursor-row-resize z-50 flex items-center justify-center border-y border-border">
             <div className="w-16 h-1 bg-white/80 rounded-full" />
           </PanelResizeHandle>
         )}
 
         {/* Stats Bar - Large for TV visibility */}
         <Panel defaultSize={layout.stats} minSize={5} maxSize={20} className="bg-card shadow-sm z-30 flex flex-col">
-          <div className="w-full h-full border-b border-border px-4 py-1 flex items-center justify-center min-h-[30px] overflow-hidden">
+          <div className="w-full h-full px-4 py-1 flex items-center justify-center min-h-[30px] overflow-hidden">
             <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-6 h-full">
               <StatBadge label="Total Ativos" value={stats.total} large />
               <div className="h-4 sm:h-6 w-px bg-border hidden sm:block"></div>
@@ -321,7 +321,7 @@ export function NursingDashboard() {
         </Panel>
 
         {isLayoutUnlocked && (
-          <PanelResizeHandle className="h-2 bg-blue-500/50 hover:bg-blue-600 active:bg-blue-700 transition-colors cursor-row-resize z-50 flex items-center justify-center">
+          <PanelResizeHandle className="h-2 bg-blue-500/50 hover:bg-blue-600 active:bg-blue-700 transition-colors cursor-row-resize z-50 flex items-center justify-center border-y border-border">
             <div className="w-16 h-1 bg-white/80 rounded-full" />
           </PanelResizeHandle>
         )}
@@ -387,13 +387,13 @@ export function NursingDashboard() {
             </Panel>
 
             {isLayoutUnlocked && (
-              <PanelResizeHandle className="w-2 bg-blue-500/50 hover:bg-blue-600 active:bg-blue-700 transition-colors cursor-col-resize z-50 flex items-center justify-center">
+              <PanelResizeHandle className="w-2 bg-blue-500/50 hover:bg-blue-600 active:bg-blue-700 transition-colors cursor-col-resize z-50 flex items-center justify-center border-x border-border">
                 <div className="h-16 w-1 bg-white/80 rounded-full" />
               </PanelResizeHandle>
             )}
 
             {/* Sidebar - Compact */}
-            <Panel defaultSize={layout.mainRight} minSize={15} maxSize={40} className="bg-background border-t xl:border-t-0 xl:border-l border-border flex flex-col shrink-0 h-full relative">
+            <Panel defaultSize={layout.mainRight} minSize={15} maxSize={40} className="bg-background border-t xl:border-t-0 border-border flex flex-col shrink-0 h-full relative">
               {/* Recent Completed */}
               <div className="py-2 px-4 bg-muted/10 border-b border-border shadow-sm shrink-0 absolute top-0 left-0 right-0 h-[45px] z-10">
                 <h3 className="text-base font-bold flex items-center gap-2 text-foreground/90">
