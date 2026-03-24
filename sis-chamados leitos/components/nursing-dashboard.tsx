@@ -252,7 +252,7 @@ export function NursingDashboard() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                   {activeCalls.map((call) => (
                     <CallCard 
                       key={call.id} 
@@ -432,7 +432,7 @@ function CallCard({
 
   return (
     <Card className={cn(
-      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col h-[280px] min-h-[280px]",
+      "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col h-full",
       "border-l-[12px]",
       call.priority === "emergency" && "border-l-emergency shadow-emergency/10",
       call.priority === "urgent" && "border-l-urgent",
