@@ -630,7 +630,7 @@ function CallCard({
   return (
     <Card className={cn(
       "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col h-full",
-      "border-l-[8px]",
+      "border-l-[6px]",
       call.priority === "emergency" && "border-l-emergency shadow-emergency/10",
       call.priority === "urgent" && "border-l-urgent",
       call.priority === "routine" && "border-l-routine",
@@ -639,15 +639,15 @@ function CallCard({
       isPending && call.priority === "urgent" && "animate-blink-urgent bg-urgent/5",
       isPending && call.priority === "routine" && "animate-blink-routine bg-routine/5"
     )}>
-      <CardContent className="p-2 sm:p-3 flex flex-col h-full w-full justify-between">
+      <CardContent className="p-1 sm:p-2 flex flex-col h-full w-full justify-between">
         {/* Top Row: Room Info and Timer */}
-        <div className="flex items-start justify-between gap-1 sm:gap-2 mb-1 shrink-0">
+        <div className="flex items-start justify-between gap-1 sm:gap-1.5 mb-0.5 shrink-0">
           <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
             <div className={cn("p-1 sm:p-1.5 rounded-lg shrink-0", priorityConfig.className)}>
               <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
             <div className="flex-1 min-w-0 flex items-center">
-              <h3 className="text-xl sm:text-2xl font-black text-foreground tracking-tight leading-none break-words whitespace-normal line-clamp-2" title={call.room || call.patientName || 'Quarto'}>
+              <h3 className="text-lg sm:text-xl font-black text-foreground tracking-tight leading-none break-words whitespace-normal line-clamp-2" title={call.room || call.patientName || 'Quarto'}>
                 {call.room || call.patientName || 'Quarto'}
               </h3>
             </div>
@@ -655,8 +655,8 @@ function CallCard({
         </div>
 
         {/* Middle Row: Details */}
-        <div className="flex items-end justify-between gap-1 sm:gap-2 mb-1 w-full overflow-hidden flex-1">
-          <div className="flex flex-col gap-1 flex-1 min-w-0">
+        <div className="flex items-end justify-between gap-1 sm:gap-2 mb-0.5 w-full overflow-hidden flex-1 -mt-1">
+          <div className="flex flex-col gap-0.5 flex-1 min-w-0">
             <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
               {call.bedNumber && call.bedNumber !== call.room && call.bedNumber !== call.patientName && (
                 <span className="text-sm sm:text-base font-bold text-muted-foreground">Leito {call.bedNumber}</span>
@@ -666,19 +666,19 @@ function CallCard({
               </Badge>
             </div>
             
-            <p className="text-sm sm:text-base font-bold text-foreground opacity-90 leading-tight truncate">{getCallTypeLabel(call.callType)}</p>
+            <p className="text-xs sm:text-sm font-bold text-foreground opacity-90 leading-tight truncate">{getCallTypeLabel(call.callType)}</p>
             {call.ward && (
-              <p className="text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-widest break-words whitespace-normal line-clamp-1">{call.ward}</p>
+              <p className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest break-words whitespace-normal line-clamp-1">{call.ward}</p>
             )}
           </div>
           
           {/* Timer on the right side */}
           <div className={cn(
-            "flex flex-col items-center justify-center shrink-0 px-1.5 py-1 rounded shadow-inner transition-colors duration-500 min-w-[60px] sm:min-w-[70px]",
+            "flex flex-col items-center justify-center shrink-0 px-1 py-0.5 rounded shadow-inner transition-colors duration-500 min-w-[50px] sm:min-w-[60px]",
             timerColorClass
           )}>
-            <div className="flex items-center gap-1 text-xs sm:text-sm font-mono font-bold">
-              <Clock className="h-3.5 w-3.5 hidden sm:block" />
+            <div className="flex items-center gap-1 text-[10px] sm:text-xs font-mono font-bold">
+              <Clock className="h-3 w-3 hidden sm:block" />
               <span>
                 {minutes > 0 ? `${minutes}m ` : ''}{String(seconds).padStart(2, "0")}s
               </span>
@@ -687,7 +687,7 @@ function CallCard({
         </div>
 
         {/* Bottom Row: Actions and Status */}
-        <div className="flex flex-col gap-1.5 pt-1.5 border-t-2 border-border/60 w-full mt-auto shrink-0">
+        <div className="flex flex-col gap-1 pt-1 border-t-2 border-border/60 w-full mt-auto shrink-0">
           {/* Status indicator */}
           <div className="text-[10px] font-medium text-muted-foreground flex items-center justify-center gap-1.5 shrink-0">
             {call.status === "pending" && (
@@ -702,7 +702,7 @@ function CallCard({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-1.5 w-full mt-auto pt-1">
+          <div className="flex items-center gap-1 w-full mt-auto">
             {call.status === "pending" && (
               <>
                 <Button
