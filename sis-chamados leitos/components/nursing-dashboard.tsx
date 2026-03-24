@@ -647,7 +647,7 @@ function CallCard({
       <CardContent className="p-0 flex flex-col h-full w-full justify-between overflow-hidden">
         {/* Top Section: Room & Timer */}
         <div className="flex items-start justify-between w-full shrink-0 bg-black/5 px-2 py-0 border-b border-border/50">
-          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 flex-1 min-w-0 h-8 sm:h-10">
             <div className={cn("p-1 rounded-md shrink-0 flex items-center justify-center", priorityConfig.className)}>
               <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
@@ -658,11 +658,11 @@ function CallCard({
           
           {/* Timer absolute top right */}
           <div className={cn(
-            "flex flex-col items-center justify-center shrink-0 px-2 py-0.5 rounded shadow-inner transition-colors duration-500 min-w-[60px] my-0.5",
+            "flex flex-col items-center justify-center shrink-0 px-3 py-1 rounded shadow-inner transition-colors duration-500 min-w-[70px] my-0.5",
             timerColorClass
           )}>
-            <div className="flex items-center gap-1 text-xs sm:text-sm font-mono font-bold">
-              <Clock className="h-3 w-3 hidden sm:block" />
+            <div className="flex items-center gap-1 text-sm sm:text-base font-mono font-bold">
+              <Clock className="h-3.5 w-3.5 hidden sm:block" />
               <span>
                 {hours > 0 ? `${hours}h ` : ''}{minutes > 0 || hours > 0 ? `${minutes}m ` : ''}{String(seconds).padStart(2, "0")}s
               </span>
@@ -671,7 +671,7 @@ function CallCard({
         </div>
 
         {/* Middle Section: Details (Takes remaining space) */}
-        <div className="flex flex-col justify-center flex-1 w-full min-h-0 overflow-hidden px-2 py-0 -my-1">
+        <div className="flex flex-col justify-center flex-1 w-full min-h-0 overflow-hidden px-2 py-0 -mt-1 mb-1">
           <div className="flex items-center gap-2 flex-wrap mb-1">
             {call.bedNumber && call.bedNumber !== call.room && call.bedNumber !== call.patientName && (
               <span className="text-sm sm:text-base font-bold text-muted-foreground leading-none">Leito {call.bedNumber}</span>
@@ -693,7 +693,7 @@ function CallCard({
         </div>
 
         {/* Bottom Section: Actions */}
-        <div className="flex flex-col gap-1 w-full shrink-0 border-t border-border/60 bg-black/5 px-2 pt-1">
+        <div className="flex flex-col gap-1 w-full shrink-0 border-t border-border/60 bg-black/5 px-2 pt-1 pb-1">
           {/* Status indicator */}
           <div className="text-[10px] sm:text-[11px] font-medium text-muted-foreground flex items-center justify-center gap-1.5 w-full">
             {call.status === "pending" && (
@@ -708,7 +708,7 @@ function CallCard({
           </div>
 
           {/* Buttons */}
-          <div className="flex items-center gap-1.5 w-full pb-1">
+          <div className="flex items-center gap-1.5 w-full mt-0.5">
             {call.status === "pending" && (
               <>
                 <Button
