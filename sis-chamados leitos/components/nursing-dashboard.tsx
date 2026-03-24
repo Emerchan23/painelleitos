@@ -57,13 +57,14 @@ export function NursingDashboard() {
   const [isLoggingIn, setIsLoggingIn] = useState(false)
   
   // Default sizes
-  const defaultLayout = {
-    header: 12,
-    stats: 8,
-    main: 80,
-    mainLeft: 75,
-    mainRight: 25
-  }
+   const defaultLayout = {
+     header: 12,
+     stats: 8,
+     main: 80,
+     mainLeft: 75,
+     mainRight: 25,
+     cardHeight: 280
+   }
   
   const [layout, setLayout] = useState(defaultLayout)
   
@@ -334,11 +335,26 @@ export function NursingDashboard() {
           }}>
             {/* Active Calls List - Takes most space */}
             <Panel defaultSize={layout.mainLeft} minSize={50} className="flex flex-col h-full relative">
-              <div className="px-4 py-2 bg-background border-b border-border shadow-sm z-10 shrink-0 absolute top-0 left-0 right-0 h-[45px]">
+              <div className="px-4 py-2 bg-background border-b border-border shadow-sm z-10 shrink-0 absolute top-0 left-0 right-0 h-[45px] flex items-center justify-between">
                 <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
                   <Clock className="h-5 w-5 text-primary" />
                   Chamados Ativos
                 </h2>
+                
+                {isLayoutUnlocked && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-muted-foreground">Tamanho dos Cards:</span>
+                    <input 
+                      type="range" 
+                      min="150" 
+                      max="400" 
+                      value={layout.cardHeight || 280}
+                      onChange={(e) => setLayout(prev => ({ ...prev, cardHeight: parseInt(e.target.value) }))}
+                      className="w-24 accent-blue-600"
+                    />
+                    <span className="text-xs font-mono w-8">{layout.cardHeight || 280}px</span>
+                  </div>
+                )}
               </div>
               
               <div className="absolute inset-0 top-[45px] bottom-0 overflow-y-auto p-4 scrollbar-hide pb-24">
@@ -351,7 +367,10 @@ export function NursingDashboard() {
                     </CardContent>
                   </Card>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 auto-rows-fr">
+                  <div 
+                  className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6"
+                  style={{ gridAutoRows: `${layout.cardHeight || 280}px` }}
+                >
                     {activeCalls.map((call) => (
                       <CallCard 
                         key={call.id} 
