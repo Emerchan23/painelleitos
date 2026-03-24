@@ -639,15 +639,15 @@ function CallCard({
       isPending && call.priority === "urgent" && "animate-blink-urgent bg-urgent/5",
       isPending && call.priority === "routine" && "animate-blink-routine bg-routine/5"
     )}>
-      <CardContent className="p-1 sm:p-2 flex flex-col h-full w-full justify-between">
+      <CardContent className="p-1 sm:p-1.5 flex flex-col h-full w-full justify-between gap-0">
         {/* Top Row: Room Info and Timer */}
-        <div className="flex items-start justify-between gap-1 sm:gap-1.5 mb-0.5 shrink-0">
-          <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
-            <div className={cn("p-1 sm:p-1.5 rounded-lg shrink-0", priorityConfig.className)}>
-              <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+        <div className="flex items-start justify-between gap-1 mb-0 shrink-0 mt-0">
+          <div className="flex items-center gap-1 flex-1 min-w-0">
+            <div className={cn("p-1 rounded-md shrink-0", priorityConfig.className)}>
+              <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div className="flex-1 min-w-0 flex items-center">
-              <h3 className="text-lg sm:text-xl font-black text-foreground tracking-tight leading-none break-words whitespace-normal line-clamp-2" title={call.room || call.patientName || 'Quarto'}>
+              <h3 className="text-base sm:text-lg font-black text-foreground tracking-tight leading-none break-words whitespace-normal line-clamp-2" title={call.room || call.patientName || 'Quarto'}>
                 {call.room || call.patientName || 'Quarto'}
               </h3>
             </div>
@@ -655,30 +655,30 @@ function CallCard({
         </div>
 
         {/* Middle Row: Details */}
-        <div className="flex items-end justify-between gap-1 sm:gap-2 mb-0.5 w-full overflow-hidden flex-1 -mt-1">
-          <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+        <div className="flex items-end justify-between gap-1 mb-0 w-full overflow-hidden flex-1 py-0.5">
+          <div className="flex flex-col gap-0 flex-1 min-w-0 justify-center">
+            <div className="flex items-center gap-1 flex-wrap mb-0.5">
               {call.bedNumber && call.bedNumber !== call.room && call.bedNumber !== call.patientName && (
-                <span className="text-sm sm:text-base font-bold text-muted-foreground">Leito {call.bedNumber}</span>
+                <span className="text-xs sm:text-sm font-bold text-muted-foreground leading-none">Leito {call.bedNumber}</span>
               )}
-              <Badge variant="outline" className={cn("text-[9px] sm:text-[10px] px-1 py-0 font-bold", priorityConfig.className)}>
+              <Badge variant="outline" className={cn("text-[8px] sm:text-[9px] px-1 py-0 font-bold leading-none h-4", priorityConfig.className)}>
                 {priorityConfig.label}
               </Badge>
             </div>
             
-            <p className="text-xs sm:text-sm font-bold text-foreground opacity-90 leading-tight truncate">{getCallTypeLabel(call.callType)}</p>
+            <p className="text-xs sm:text-sm font-bold text-foreground opacity-90 leading-tight truncate mt-0.5">{getCallTypeLabel(call.callType)}</p>
             {call.ward && (
-              <p className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest break-words whitespace-normal line-clamp-1">{call.ward}</p>
+              <p className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest break-words whitespace-normal line-clamp-1 leading-none mt-0.5">{call.ward}</p>
             )}
           </div>
           
           {/* Timer on the right side */}
           <div className={cn(
-            "flex flex-col items-center justify-center shrink-0 px-1 py-0.5 rounded shadow-inner transition-colors duration-500 min-w-[50px] sm:min-w-[60px]",
+            "flex flex-col items-center justify-center shrink-0 px-1 py-0.5 rounded shadow-inner transition-colors duration-500 min-w-[45px] sm:min-w-[55px]",
             timerColorClass
           )}>
-            <div className="flex items-center gap-1 text-[10px] sm:text-xs font-mono font-bold">
-              <Clock className="h-3 w-3 hidden sm:block" />
+            <div className="flex items-center gap-0.5 text-[9px] sm:text-xs font-mono font-bold">
+              <Clock className="h-2.5 w-2.5 hidden sm:block" />
               <span>
                 {minutes > 0 ? `${minutes}m ` : ''}{String(seconds).padStart(2, "0")}s
               </span>
@@ -687,9 +687,9 @@ function CallCard({
         </div>
 
         {/* Bottom Row: Actions and Status */}
-        <div className="flex flex-col gap-1 pt-1 border-t-2 border-border/60 w-full mt-auto shrink-0">
+        <div className="flex flex-col gap-0.5 pt-0.5 border-t border-border/60 w-full mt-0 shrink-0">
           {/* Status indicator */}
-          <div className="text-[10px] font-medium text-muted-foreground flex items-center justify-center gap-1.5 shrink-0">
+          <div className="text-[9px] font-medium text-muted-foreground flex items-center justify-center gap-1 shrink-0">
             {call.status === "pending" && (
               <><div className="w-1.5 h-1.5 rounded-full bg-emergency animate-pulse" /> Aguardando</>
             )}
@@ -702,24 +702,24 @@ function CallCard({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-1 w-full mt-auto">
+          <div className="flex items-center gap-1 w-full pb-0.5">
             {call.status === "pending" && (
               <>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => onSeen(call.id)}
-                  className="h-6 sm:h-7 flex-1 px-1.5 text-[9px] sm:text-xs font-bold border-2"
+                  className="h-6 flex-1 px-1 text-[9px] sm:text-[10px] font-bold border"
                 >
-                  <Eye className="h-3 w-3 mr-1 shrink-0 hidden sm:block" />
+                  <Eye className="h-2.5 w-2.5 mr-1 shrink-0 hidden sm:block" />
                   <span className="truncate">Visualizar</span>
                 </Button>
                 <Button
                   size="sm"
                   onClick={() => onAttend(call.id)}
-                  className="h-6 sm:h-7 flex-1 px-1.5 text-[9px] sm:text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="h-6 flex-1 px-1 text-[9px] sm:text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  <Play className="h-3 w-3 mr-1 shrink-0 hidden sm:block" />
+                  <Play className="h-2.5 w-2.5 mr-1 shrink-0 hidden sm:block" />
                   <span className="truncate">Atender</span>
                 </Button>
               </>
@@ -728,9 +728,9 @@ function CallCard({
               <Button
                 size="sm"
                 onClick={() => onAttend(call.id)}
-                className="h-6 sm:h-7 w-full px-2 sm:px-4 text-[10px] sm:text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                className="h-6 w-full px-2 text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                <Play className="h-3 w-3 mr-1 sm:mr-1.5 shrink-0" />
+                <Play className="h-2.5 w-2.5 mr-1 shrink-0" />
                 Atender
               </Button>
             )}
@@ -738,9 +738,9 @@ function CallCard({
               <Button
                 size="sm"
                 onClick={() => onComplete(call.id)}
-                className="h-6 sm:h-7 w-full px-2 sm:px-4 text-[10px] sm:text-xs font-bold bg-success text-success-foreground hover:bg-success/90"
+                className="h-6 w-full px-2 text-[10px] font-bold bg-success text-success-foreground hover:bg-success/90"
               >
-                <CheckCircle2 className="h-3 w-3 mr-1 sm:mr-1.5 shrink-0" />
+                <CheckCircle2 className="h-2.5 w-2.5 mr-1 shrink-0" />
                 Finalizar
               </Button>
             )}
