@@ -58,13 +58,14 @@ export function NursingDashboard() {
   
   // Default sizes
    const defaultLayout = {
-     header: 12,
-     stats: 8,
-     main: 80,
-     mainLeft: 75,
-     mainRight: 25,
-     cardHeight: 280
-   }
+      header: 12,
+      stats: 8,
+      main: 80,
+      mainLeft: 75,
+      mainRight: 25,
+      cardHeight: 280,
+      titleBarHeight: 45
+    }
   
   const [layout, setLayout] = useState(defaultLayout)
   
@@ -335,29 +336,50 @@ export function NursingDashboard() {
           }}>
             {/* Active Calls List - Takes most space */}
             <Panel defaultSize={layout.mainLeft} minSize={50} className="flex flex-col h-full relative">
-              <div className="px-4 py-2 bg-background border-b border-border shadow-sm z-10 shrink-0 absolute top-0 left-0 right-0 h-[45px] flex items-center justify-between">
+              <div 
+                className="px-4 bg-background border-b border-border shadow-sm z-10 shrink-0 absolute top-0 left-0 right-0 flex items-center justify-between"
+                style={{ height: `${layout.titleBarHeight || 45}px` }}
+              >
                 <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
                   <Clock className="h-5 w-5 text-primary" />
                   Chamados Ativos
                 </h2>
                 
                 {isLayoutUnlocked && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-muted-foreground">Tamanho dos Cards:</span>
-                    <input 
-                      type="range" 
-                      min="150" 
-                      max="400" 
-                      value={layout.cardHeight || 280}
-                      onChange={(e) => setLayout(prev => ({ ...prev, cardHeight: parseInt(e.target.value) }))}
-                      className="w-24 accent-blue-600"
-                    />
-                    <span className="text-xs font-mono w-8">{layout.cardHeight || 280}px</span>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border border-border/50">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Barra:</span>
+                      <input 
+                        type="range" 
+                        min="30" 
+                        max="80" 
+                        value={layout.titleBarHeight || 45}
+                        onChange={(e) => setLayout(prev => ({ ...prev, titleBarHeight: parseInt(e.target.value) }))}
+                        className="w-16 accent-blue-600 h-1.5"
+                      />
+                      <span className="text-[10px] font-mono w-6 font-bold">{layout.titleBarHeight || 45}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border border-border/50">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Cards:</span>
+                      <input 
+                        type="range" 
+                        min="150" 
+                        max="400" 
+                        value={layout.cardHeight || 280}
+                        onChange={(e) => setLayout(prev => ({ ...prev, cardHeight: parseInt(e.target.value) }))}
+                        className="w-20 accent-blue-600 h-1.5"
+                      />
+                      <span className="text-[10px] font-mono w-6 font-bold">{layout.cardHeight || 280}</span>
+                    </div>
                   </div>
                 )}
               </div>
               
-              <div className="absolute inset-0 top-[45px] bottom-0 overflow-y-auto p-4 scrollbar-hide pb-24">
+              <div 
+                className="absolute inset-0 bottom-0 overflow-y-auto p-4 scrollbar-hide pb-24"
+                style={{ top: `${layout.titleBarHeight || 45}px` }}
+              >
                 {activeCalls.length === 0 ? (
                   <Card className="border-2 border-dashed h-full min-h-[200px] flex items-center justify-center">
                     <CardContent className="py-12 text-center">
@@ -395,13 +417,19 @@ export function NursingDashboard() {
             {/* Sidebar - Compact */}
             <Panel defaultSize={layout.mainRight} minSize={15} maxSize={40} className="bg-background border-t xl:border-t-0 border-border flex flex-col shrink-0 h-full relative">
               {/* Recent Completed */}
-              <div className="py-2 px-4 bg-muted/10 border-b border-border shadow-sm shrink-0 absolute top-0 left-0 right-0 h-[45px] z-10">
+              <div 
+                className="px-4 bg-muted/10 border-b border-border shadow-sm shrink-0 absolute top-0 left-0 right-0 z-10 flex items-center"
+                style={{ height: `${layout.titleBarHeight || 45}px` }}
+              >
                 <h3 className="text-base font-bold flex items-center gap-2 text-foreground/90">
                   <CheckCircle2 className="h-5 w-5 text-success" />
                   Finalizados Recentes
                 </h3>
               </div>
-              <div className="absolute inset-0 top-[45px] bottom-0 overflow-y-auto p-0 scrollbar-hide pb-24">
+              <div 
+                className="absolute inset-0 bottom-0 overflow-y-auto p-0 scrollbar-hide pb-24"
+                style={{ top: `${layout.titleBarHeight || 45}px` }}
+              >
                 {completedCalls.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8 font-medium">
                     Nenhum chamado finalizado
