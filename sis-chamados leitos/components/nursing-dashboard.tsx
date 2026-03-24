@@ -148,54 +148,54 @@ export function NursingDashboard() {
     <div ref={containerRef} className="fixed inset-0 bg-background flex flex-col overflow-hidden">
       {/* Header - Compact for TV */}
       <header className="bg-card border-b border-border sticky top-0 z-40 shadow-sm w-full">
-        <div className="w-full px-4 py-4">
+        <div className="w-full px-4 py-1.5">
           <div className="flex items-center justify-between">
             {/* Left Area: Title & Navigation */}
-            <div className="flex items-center gap-4 w-auto shrink-0">
-              <div className="bg-primary p-3 rounded-xl shadow-inner shrink-0">
-                <HeartPulse className="h-8 w-8 text-primary-foreground" />
+            <div className="flex items-center gap-3 w-auto shrink-0">
+              <div className="bg-primary p-2 rounded-xl shadow-inner shrink-0">
+                <HeartPulse className="h-6 w-6 text-primary-foreground" />
               </div>
               <div className="whitespace-nowrap hidden lg:block">
-                <h1 className="text-3xl font-black text-foreground tracking-tight">Central de Enfermagem</h1>
-                <p className="text-lg font-medium text-muted-foreground">Painel de Chamados</p>
+                <h1 className="text-xl font-black text-foreground tracking-tight">Central de Enfermagem</h1>
+                <p className="text-sm font-medium text-muted-foreground">Painel de Chamados</p>
               </div>
             </div>
 
             {/* Center Area: Custom Company Info (Logo + Name) */}
             <div className="flex items-center justify-center flex-1 mx-4 sm:mx-8">
-              <div className="flex flex-row items-center justify-center text-center opacity-90 gap-4 bg-muted/20 px-6 py-2 rounded-2xl w-full max-w-3xl">
+              <div className="flex flex-row items-center justify-center text-center opacity-90 gap-3 bg-muted/20 px-4 py-1.5 rounded-2xl w-full max-w-2xl">
                 {refreshSettings?.logo_url && (
-                  <div className="relative h-16 shrink-0 flex items-center">
+                  <div className="relative h-10 shrink-0 flex items-center">
                     <img 
                       src={refreshSettings.logo_url} 
                       alt="Logo" 
-                      className="h-full w-auto object-contain max-w-[200px]"
+                      className="h-full w-auto object-contain max-w-[150px]"
                       onError={(e) => (e.currentTarget.style.display = 'none')}
                     />
                   </div>
                 )}
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black tracking-widest uppercase text-slate-700 dark:text-slate-200 leading-tight">
+                <span className="text-lg sm:text-xl font-black tracking-widest uppercase text-slate-700 dark:text-slate-200 leading-tight">
                   {refreshSettings?.company_name || "HOSPITAL SYSTEM"}
                 </span>
               </div>
             </div>
 
             {/* Right Area: Controls & Clock */}
-            <div className="flex items-center justify-end gap-4 sm:gap-6 w-auto shrink-0">
+            <div className="flex items-center justify-end gap-3 sm:gap-4 w-auto shrink-0">
               {/* Fullscreen Toggle */}
               <Button
                 variant="ghost"
                 size="lg"
                 onClick={toggleFullscreen}
-                className="h-14 w-14 p-0 rounded-full bg-muted/50 hover:bg-muted shrink-0"
+                className="h-10 w-10 p-0 rounded-full bg-muted/50 hover:bg-muted shrink-0"
                 title={isFullscreen ? "Sair da tela cheia" : "Tela cheia"}
               >
-                <Maximize className="h-7 w-7" />
+                <Maximize className="h-5 w-5" />
               </Button>
 
               {/* Clock */}
-              <div className="text-right border-l border-border pl-6 ml-2 shrink-0">
-                <p className="text-4xl font-black text-foreground tabular-nums tracking-tighter">
+              <div className="text-right border-l border-border pl-4 ml-1 shrink-0">
+                <p className="text-2xl font-black text-foreground tabular-nums tracking-tighter">
                   {now.toLocaleTimeString("pt-BR", { 
                     timeZone: refreshSettings.timezone,
                     hour: "2-digit", 
@@ -203,7 +203,7 @@ export function NursingDashboard() {
                     second: "2-digit" 
                   })}
                 </p>
-                <p className="text-base font-semibold text-muted-foreground uppercase tracking-wider mt-1">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-0.5">
                   {now.toLocaleDateString("pt-BR", { 
                     timeZone: refreshSettings.timezone,
                     weekday: "long", 
@@ -219,10 +219,10 @@ export function NursingDashboard() {
 
       {/* Stats Bar - Large for TV visibility */}
       <div className="bg-card border-b border-border shadow-sm z-30 relative w-full">
-        <div className="w-full px-4 py-6">
-          <div className="flex items-center gap-10">
+        <div className="w-full px-4 py-2">
+          <div className="flex items-center gap-6">
             <StatBadge label="Total Ativos" value={stats.total} large />
-            <div className="h-10 w-px bg-border"></div>
+            <div className="h-6 w-px bg-border"></div>
             <StatBadge label="Críticos" value={stats.emergency} variant="emergency" large />
             <StatBadge label="Urgentes" value={stats.urgent} variant="urgent" large />
             <StatBadge label="Rotina" value={stats.routine} variant="routine" large />
@@ -235,14 +235,14 @@ export function NursingDashboard() {
         <div className="flex flex-col xl:flex-row h-full min-h-0">
           {/* Active Calls List - Takes most space */}
           <div className="flex-1 flex flex-col h-full min-h-0 relative">
-            <div className="px-6 py-4 bg-background border-b border-border shadow-sm z-10 shrink-0 absolute top-0 left-0 right-0 h-[73px]">
-              <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
-                <Clock className="h-7 w-7 text-primary" />
+            <div className="px-4 py-2 bg-background border-b border-border shadow-sm z-10 shrink-0 absolute top-0 left-0 right-0 h-[45px]">
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                <Clock className="h-5 w-5 text-primary" />
                 Chamados Ativos
               </h2>
             </div>
             
-            <div className="absolute inset-0 top-[73px] bottom-0 overflow-y-auto p-6 scrollbar-hide pb-32">
+            <div className="absolute inset-0 top-[45px] bottom-0 overflow-y-auto p-4 scrollbar-hide pb-24">
               {activeCalls.length === 0 ? (
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-24 text-center">
@@ -269,16 +269,16 @@ export function NursingDashboard() {
           </div>
 
           {/* Sidebar - Compact */}
-          <div className="w-full xl:w-[380px] 2xl:w-[450px] bg-background border-t xl:border-t-0 xl:border-l border-border flex flex-col shrink-0 h-full min-h-0 relative">
+          <div className="w-full xl:w-[280px] 2xl:w-[320px] bg-background border-t xl:border-t-0 xl:border-l border-border flex flex-col shrink-0 h-full min-h-0 relative">
             {/* Recent Completed */}
             <div className="flex flex-col h-full relative">
-              <div className="py-4 px-6 bg-muted/10 border-b border-border shadow-sm shrink-0 absolute top-0 left-0 right-0 h-[61px] z-10">
-                <h3 className="text-xl font-bold flex items-center gap-2.5 text-foreground/90">
-                  <CheckCircle2 className="h-6 w-6 text-success" />
+              <div className="py-2 px-4 bg-muted/10 border-b border-border shadow-sm shrink-0 absolute top-0 left-0 right-0 h-[45px] z-10">
+                <h3 className="text-base font-bold flex items-center gap-2 text-foreground/90">
+                  <CheckCircle2 className="h-5 w-5 text-success" />
                   Finalizados Recentes
                 </h3>
               </div>
-              <div className="absolute inset-0 top-[61px] bottom-0 overflow-y-auto p-0 scrollbar-hide pb-32">
+              <div className="absolute inset-0 top-[45px] bottom-0 overflow-y-auto p-0 scrollbar-hide pb-24">
                 {completedCalls.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8 font-medium">
                     Nenhum chamado finalizado
@@ -347,14 +347,14 @@ function StatBadge({
     <div className="flex items-center gap-4">
       <span className={cn(
         "font-black tabular-nums tracking-tight",
-        large ? "text-5xl" : "text-3xl",
+        large ? "text-3xl" : "text-xl",
         variant ? variantClasses[variant] : "text-foreground"
       )}>
         {value}
       </span>
       <span className={cn(
         "text-muted-foreground font-semibold uppercase tracking-wider",
-        large ? "text-lg" : "text-sm"
+        large ? "text-sm" : "text-xs"
       )}>
         {label}
       </span>
@@ -433,7 +433,7 @@ function CallCard({
   return (
     <Card className={cn(
       "relative overflow-hidden transition-all duration-500 hover:shadow-lg flex flex-col h-full",
-      "border-l-[12px]",
+      "border-l-[8px]",
       call.priority === "emergency" && "border-l-emergency shadow-emergency/10",
       call.priority === "urgent" && "border-l-urgent",
       call.priority === "routine" && "border-l-routine",
@@ -442,15 +442,15 @@ function CallCard({
       isPending && call.priority === "urgent" && "animate-blink-urgent bg-urgent/5",
       isPending && call.priority === "routine" && "animate-blink-routine bg-routine/5"
     )}>
-      <CardContent className="p-6 flex flex-col h-full flex-1">
+      <CardContent className="p-4 flex flex-col h-full flex-1">
         {/* Top Row: Room Info and Timer */}
-        <div className="flex items-start justify-between gap-4 mb-2">
-          <div className="flex items-start gap-3 flex-1 min-w-0">
-            <div className={cn("p-2.5 rounded-xl shrink-0", priorityConfig.className)}>
-              <Icon className="h-7 w-7" />
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <div className="flex items-start gap-2 flex-1 min-w-0">
+            <div className={cn("p-1.5 rounded-lg shrink-0", priorityConfig.className)}>
+              <Icon className="h-5 w-5" />
             </div>
-            <div className="flex-1 min-w-0 flex items-center min-h-[3rem]">
-              <h3 className="text-3xl sm:text-4xl lg:text-4xl font-black text-foreground tracking-tight leading-none break-words whitespace-normal line-clamp-2" title={call.room || call.patientName || 'Quarto'}>
+            <div className="flex-1 min-w-0 flex items-center min-h-[2rem]">
+              <h3 className="text-xl sm:text-2xl font-black text-foreground tracking-tight leading-none break-words whitespace-normal line-clamp-2" title={call.room || call.patientName || 'Quarto'}>
                 {call.room || call.patientName || 'Quarto'}
               </h3>
             </div>
@@ -458,30 +458,30 @@ function CallCard({
         </div>
 
         {/* Middle Row: Details */}
-        <div className="flex items-end justify-between gap-3 mb-2 flex-1">
-          <div className="flex flex-col gap-1 flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-end justify-between gap-2 mb-1 flex-1">
+          <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap">
               {call.bedNumber && call.bedNumber !== call.room && call.bedNumber !== call.patientName && (
-                <span className="text-lg font-bold text-muted-foreground">Leito {call.bedNumber}</span>
+                <span className="text-base font-bold text-muted-foreground">Leito {call.bedNumber}</span>
               )}
-              <Badge variant="outline" className={cn("text-xs px-2 py-0.5 font-bold", priorityConfig.className)}>
+              <Badge variant="outline" className={cn("text-[10px] px-1.5 py-0 font-bold", priorityConfig.className)}>
                 {priorityConfig.label}
               </Badge>
             </div>
             
-            <p className="text-lg font-bold text-foreground opacity-90 leading-tight truncate">{getCallTypeLabel(call.callType)}</p>
+            <p className="text-base font-bold text-foreground opacity-90 leading-tight truncate">{getCallTypeLabel(call.callType)}</p>
             {call.ward && (
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest break-words whitespace-normal line-clamp-1">{call.ward}</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest break-words whitespace-normal line-clamp-1">{call.ward}</p>
             )}
           </div>
           
           {/* Timer on the right side */}
           <div className={cn(
-            "flex flex-col items-center justify-center shrink-0 px-2 py-1.5 rounded-lg shadow-inner transition-colors duration-500 min-w-[90px]",
+            "flex flex-col items-center justify-center shrink-0 px-1.5 py-1 rounded-md shadow-inner transition-colors duration-500 min-w-[70px]",
             timerColorClass
           )}>
-            <div className="flex items-center gap-1 text-base font-mono font-bold">
-              <Clock className="h-3.5 w-3.5" />
+            <div className="flex items-center gap-1 text-sm font-mono font-bold">
+              <Clock className="h-3 w-3" />
               <span>
                 {minutes > 0 ? `${minutes}m ` : ''}{String(seconds).padStart(2, "0")}s
               </span>
@@ -492,39 +492,39 @@ function CallCard({
         <div className="mt-auto"></div>
 
         {/* Bottom Row: Actions and Status */}
-        <div className="flex flex-col gap-2 pt-3 border-t-2 border-border/60 mt-auto">
+        <div className="flex flex-col gap-1.5 pt-2 border-t-2 border-border/60 mt-auto">
           {/* Status indicator */}
-          <div className="text-sm font-medium text-muted-foreground flex items-center justify-center gap-2 shrink-0">
+          <div className="text-xs font-medium text-muted-foreground flex items-center justify-center gap-2 shrink-0">
             {call.status === "pending" && (
-              <><div className="w-2.5 h-2.5 rounded-full bg-emergency animate-pulse" /> Aguardando</>
+              <><div className="w-2 h-2 rounded-full bg-emergency animate-pulse" /> Aguardando</>
             )}
             {call.status === "seen" && (
-              <><div className="w-2.5 h-2.5 rounded-full bg-urgent animate-pulse" /> Visualizado</>
+              <><div className="w-2 h-2 rounded-full bg-urgent animate-pulse" /> Visualizado</>
             )}
             {call.status === "attending" && (
-              <><div className="w-2.5 h-2.5 rounded-full bg-success animate-pulse" /> Atendendo</>
+              <><div className="w-2 h-2 rounded-full bg-success animate-pulse" /> Atendendo</>
             )}
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 w-full">
+          <div className="flex items-center gap-1.5 w-full">
             {call.status === "pending" && (
               <>
                 <Button
                   size="default"
                   variant="outline"
                   onClick={() => onSeen(call.id)}
-                  className="h-10 flex-1 px-2 text-sm font-bold border-2"
+                  className="h-8 flex-1 px-2 text-xs font-bold border-2"
                 >
-                  <Eye className="h-4 w-4 mr-1.5 shrink-0" />
+                  <Eye className="h-3.5 w-3.5 mr-1 shrink-0" />
                   <span className="truncate">Visualizar</span>
                 </Button>
                 <Button
                   size="default"
                   onClick={() => onAttend(call.id)}
-                  className="h-10 flex-1 px-2 text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="h-8 flex-1 px-2 text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  <Play className="h-4 w-4 mr-1.5 shrink-0" />
+                  <Play className="h-3.5 w-3.5 mr-1 shrink-0" />
                   <span className="truncate">Atender</span>
                 </Button>
               </>
@@ -533,9 +533,9 @@ function CallCard({
               <Button
                 size="default"
                 onClick={() => onAttend(call.id)}
-                className="h-10 w-full px-6 text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                className="h-8 w-full px-4 text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                <Play className="h-4 w-4 mr-2 shrink-0" />
+                <Play className="h-3.5 w-3.5 mr-1.5 shrink-0" />
                 Atender
               </Button>
             )}
@@ -543,9 +543,9 @@ function CallCard({
               <Button
                 size="default"
                 onClick={() => onComplete(call.id)}
-                className="h-10 w-full px-6 text-sm font-bold bg-success text-success-foreground hover:bg-success/90"
+                className="h-8 w-full px-4 text-xs font-bold bg-success text-success-foreground hover:bg-success/90"
               >
-                <CheckCircle2 className="h-4 w-4 mr-2 shrink-0" />
+                <CheckCircle2 className="h-3.5 w-3.5 mr-1.5 shrink-0" />
                 Finalizar
               </Button>
             )}
