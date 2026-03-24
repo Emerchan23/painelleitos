@@ -12,12 +12,18 @@ import {
   Play, 
   CheckCircle2,
   Eye,
-  Maximize
+  Maximize,
+  Lock,
+  Unlock,
+  KeyRound
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels"
 
 const CALL_ICONS: Record<string, React.ElementType> = {
   emergency: AlertTriangle,
@@ -36,11 +42,69 @@ const PRIORITY_CONFIG: Record<CallPriority, { label: string; className: string }
 export function NursingDashboard() {
   const { 
     calls, markAsSeen, attendCall, completeCall, hasNewCalls, 
-    setHasNewCalls, soundSettings, playAlertSound, refreshSettings 
+    setHasNewCalls, soundSettings, playAlertSound, refreshSettings, updateRefreshSettings, login 
   } = useHospital()
   const [now, setNow] = useState(new Date())
   const [isFullscreen, setIsFullscreen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // Layout states
+  const [isLayoutUnlocked, setIsLayoutUnlocked] = useState(false)
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false)
+  const [adminEmail, setAdminEmail] = useState("")
+  const [adminPassword, setAdminPassword] = useState("")
+  const [loginError, setLoginError] = useState("")
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
+  
+  // Default sizes
+  const defaultLayout = {
+    header: 12,
+    stats: 8,
+    main: 80,
+    mainLeft: 75,
+    mainRight: 25
+  }
+  
+  const [layout, setLayout] = useState(defaultLayout)
+  
+  // Load layout from settings
+  useEffect(() => {
+    if (refreshSettings?.dashboard_layout) {
+      try {
+        const parsed = JSON.parse(refreshSettings.dashboard_layout)
+        setLayout({ ...defaultLayout, ...parsed })
+      } catch (e) {
+        console.error("Failed to parse dashboard layout", e)
+      }
+    }
+  }, [refreshSettings?.dashboard_layout])
+
+  const handleUnlockSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoginError("")
+    setIsLoggingIn(true)
+    
+    const success = await login(adminEmail, adminPassword)
+    if (success) {
+      setIsLayoutUnlocked(true)
+      setShowPasswordDialog(false)
+      setAdminPassword("")
+    } else {
+      setLoginError("Email ou senha inválidos")
+    }
+    setIsLoggingIn(false)
+  }
+
+  const toggleLayoutLock = () => {
+    if (isLayoutUnlocked) {
+      // Save and lock
+      setIsLayoutUnlocked(false)
+      updateRefreshSettings({ dashboard_layout: JSON.stringify(layout) })
+    } else {
+      // Prompt for password
+      setShowPasswordDialog(true)
+    }
+  }
 
   // Update timer every second
   useEffect(() => {
@@ -145,133 +209,173 @@ export function NursingDashboard() {
   }
 
   return (
-    <div ref={containerRef} className="fixed inset-0 bg-background flex flex-col overflow-hidden">
-      {/* Header - Compact for TV */}
-      <header className="bg-card border-b border-border sticky top-0 z-40 shadow-sm w-full">
-        <div className="w-full px-4 py-1.5">
-          <div className="flex items-center justify-between">
-            {/* Left Area: Title & Navigation */}
-            <div className="flex items-center gap-3 w-auto shrink-0">
-              <div className="bg-primary p-2 rounded-xl shadow-inner shrink-0">
-                <HeartPulse className="h-6 w-6 text-primary-foreground" />
+    <div ref={containerRef} className="fixed inset-0 bg-background overflow-hidden">
+      <PanelGroup direction="vertical" onLayout={(sizes) => {
+        if (sizes.length === 3) {
+          setLayout(prev => ({ ...prev, header: sizes[0], stats: sizes[1], main: sizes[2] }))
+        }
+      }}>
+        {/* Header - Compact for TV */}
+        <Panel defaultSize={layout.header} minSize={5} maxSize={25} className="bg-card shadow-sm z-40 flex flex-col">
+          <header className="w-full h-full border-b border-border flex flex-col justify-center px-4 py-1.5 min-h-[40px]">
+            <div className="flex items-center justify-between">
+              {/* Left Area: Title & Navigation */}
+              <div className="flex items-center gap-3 w-auto shrink-0">
+                <div className="bg-primary p-2 rounded-xl shadow-inner shrink-0 hidden sm:block">
+                  <HeartPulse className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <div className="whitespace-nowrap hidden lg:block">
+                  <h1 className="text-xl font-black text-foreground tracking-tight">Central de Enfermagem</h1>
+                  <p className="text-sm font-medium text-muted-foreground">Painel de Chamados</p>
+                </div>
               </div>
-              <div className="whitespace-nowrap hidden lg:block">
-                <h1 className="text-xl font-black text-foreground tracking-tight">Central de Enfermagem</h1>
-                <p className="text-sm font-medium text-muted-foreground">Painel de Chamados</p>
+
+              {/* Center Area: Custom Company Info (Logo + Name) */}
+              <div className="flex items-center justify-center flex-1 mx-2 sm:mx-4 lg:mx-8 min-w-0">
+                <div className="flex flex-row items-center justify-center text-center opacity-90 gap-3 bg-muted/20 px-4 py-1.5 rounded-2xl w-full max-w-2xl min-w-0">
+                  {refreshSettings?.logo_url && (
+                    <div className="relative h-8 sm:h-10 shrink-0 flex items-center">
+                      <img 
+                        src={refreshSettings.logo_url} 
+                        alt="Logo" 
+                        className="h-full w-auto object-contain max-w-[150px]"
+                        onError={(e) => (e.currentTarget.style.display = 'none')}
+                      />
+                    </div>
+                  )}
+                  <span className="text-sm sm:text-lg lg:text-xl font-black tracking-widest uppercase text-slate-700 dark:text-slate-200 leading-tight truncate">
+                    {refreshSettings?.company_name || "HOSPITAL SYSTEM"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Right Area: Controls & Clock */}
+              <div className="flex items-center justify-end gap-2 sm:gap-4 w-auto shrink-0">
+                {/* Layout Lock/Unlock Toggle */}
+                <Button
+                  variant={isLayoutUnlocked ? "default" : "ghost"}
+                  size="lg"
+                  onClick={toggleLayoutLock}
+                  className={cn(
+                    "h-10 w-10 p-0 rounded-full shrink-0 transition-colors",
+                    isLayoutUnlocked ? "bg-blue-600 hover:bg-blue-700 text-white animate-pulse shadow-[0_0_15px_rgba(37,99,235,0.5)]" : "bg-muted/50 hover:bg-muted"
+                  )}
+                  title={isLayoutUnlocked ? "Salvar e Travar Layout" : "Destrancar Layout (Requer Senha)"}
+                >
+                  {isLayoutUnlocked ? <Unlock className="h-5 w-5" /> : <Lock className="h-5 w-5 opacity-50" />}
+                </Button>
+
+                {/* Fullscreen Toggle */}
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={toggleFullscreen}
+                  className="h-10 w-10 p-0 rounded-full bg-muted/50 hover:bg-muted shrink-0"
+                  title={isFullscreen ? "Sair da tela cheia" : "Tela cheia"}
+                >
+                  <Maximize className="h-5 w-5" />
+                </Button>
+
+                {/* Clock */}
+                <div className="text-right border-l border-border pl-2 sm:pl-4 ml-1 shrink-0">
+                  <p className="text-lg sm:text-2xl font-black text-foreground tabular-nums tracking-tighter">
+                    {now.toLocaleTimeString("pt-BR", { 
+                      timeZone: refreshSettings.timezone,
+                      hour: "2-digit", 
+                      minute: "2-digit", 
+                      second: "2-digit" 
+                    })}
+                  </p>
+                  <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-0.5 hidden sm:block">
+                    {now.toLocaleDateString("pt-BR", { 
+                      timeZone: refreshSettings.timezone,
+                      weekday: "long", 
+                      day: "numeric", 
+                      month: "short" 
+                    })}
+                  </p>
+                </div>
               </div>
             </div>
+          </header>
+        </Panel>
 
-            {/* Center Area: Custom Company Info (Logo + Name) */}
-            <div className="flex items-center justify-center flex-1 mx-4 sm:mx-8">
-              <div className="flex flex-row items-center justify-center text-center opacity-90 gap-3 bg-muted/20 px-4 py-1.5 rounded-2xl w-full max-w-2xl">
-                {refreshSettings?.logo_url && (
-                  <div className="relative h-10 shrink-0 flex items-center">
-                    <img 
-                      src={refreshSettings.logo_url} 
-                      alt="Logo" 
-                      className="h-full w-auto object-contain max-w-[150px]"
-                      onError={(e) => (e.currentTarget.style.display = 'none')}
-                    />
+        {isLayoutUnlocked && (
+          <PanelResizeHandle className="h-2 bg-blue-500/50 hover:bg-blue-600 active:bg-blue-700 transition-colors cursor-row-resize z-50 flex items-center justify-center">
+            <div className="w-16 h-1 bg-white/80 rounded-full" />
+          </PanelResizeHandle>
+        )}
+
+        {/* Stats Bar - Large for TV visibility */}
+        <Panel defaultSize={layout.stats} minSize={5} maxSize={20} className="bg-card shadow-sm z-30 flex flex-col">
+          <div className="w-full h-full border-b border-border px-4 py-1 flex items-center justify-center min-h-[30px] overflow-hidden">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-6 h-full">
+              <StatBadge label="Total Ativos" value={stats.total} large />
+              <div className="h-4 sm:h-6 w-px bg-border hidden sm:block"></div>
+              <StatBadge label="Críticos" value={stats.emergency} variant="emergency" large />
+              <StatBadge label="Urgentes" value={stats.urgent} variant="urgent" large />
+              <StatBadge label="Rotina" value={stats.routine} variant="routine" large />
+            </div>
+          </div>
+        </Panel>
+
+        {isLayoutUnlocked && (
+          <PanelResizeHandle className="h-2 bg-blue-500/50 hover:bg-blue-600 active:bg-blue-700 transition-colors cursor-row-resize z-50 flex items-center justify-center">
+            <div className="w-16 h-1 bg-white/80 rounded-full" />
+          </PanelResizeHandle>
+        )}
+
+        {/* Main Content */}
+        <Panel defaultSize={layout.main} minSize={40} className="flex flex-col bg-muted/30 relative">
+          <PanelGroup direction="horizontal" onLayout={(sizes) => {
+            if (sizes.length === 2) {
+              setLayout(prev => ({ ...prev, mainLeft: sizes[0], mainRight: sizes[1] }))
+            }
+          }}>
+            {/* Active Calls List - Takes most space */}
+            <Panel defaultSize={layout.mainLeft} minSize={50} className="flex flex-col h-full relative">
+              <div className="px-4 py-2 bg-background border-b border-border shadow-sm z-10 shrink-0 absolute top-0 left-0 right-0 h-[45px]">
+                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <Clock className="h-5 w-5 text-primary" />
+                  Chamados Ativos
+                </h2>
+              </div>
+              
+              <div className="absolute inset-0 top-[45px] bottom-0 overflow-y-auto p-4 scrollbar-hide pb-24">
+                {activeCalls.length === 0 ? (
+                  <Card className="border-2 border-dashed h-full min-h-[200px] flex items-center justify-center">
+                    <CardContent className="py-12 text-center">
+                      <CheckCircle2 className="h-16 w-16 text-success mx-auto mb-4" />
+                      <p className="text-2xl font-bold text-foreground">Nenhum chamado pendente</p>
+                      <p className="text-lg text-muted-foreground mt-2">Todos os pacientes foram atendidos</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 auto-rows-fr">
+                    {activeCalls.map((call) => (
+                      <CallCard 
+                        key={call.id} 
+                        call={call} 
+                        now={now} 
+                        onSeen={markAsSeen} 
+                        onAttend={attendCall} 
+                        onComplete={completeCall} 
+                      />
+                    ))}
                   </div>
                 )}
-                <span className="text-lg sm:text-xl font-black tracking-widest uppercase text-slate-700 dark:text-slate-200 leading-tight">
-                  {refreshSettings?.company_name || "HOSPITAL SYSTEM"}
-                </span>
               </div>
-            </div>
+            </Panel>
 
-            {/* Right Area: Controls & Clock */}
-            <div className="flex items-center justify-end gap-3 sm:gap-4 w-auto shrink-0">
-              {/* Fullscreen Toggle */}
-              <Button
-                variant="ghost"
-                size="lg"
-                onClick={toggleFullscreen}
-                className="h-10 w-10 p-0 rounded-full bg-muted/50 hover:bg-muted shrink-0"
-                title={isFullscreen ? "Sair da tela cheia" : "Tela cheia"}
-              >
-                <Maximize className="h-5 w-5" />
-              </Button>
+            {isLayoutUnlocked && (
+              <PanelResizeHandle className="w-2 bg-blue-500/50 hover:bg-blue-600 active:bg-blue-700 transition-colors cursor-col-resize z-50 flex items-center justify-center">
+                <div className="h-16 w-1 bg-white/80 rounded-full" />
+              </PanelResizeHandle>
+            )}
 
-              {/* Clock */}
-              <div className="text-right border-l border-border pl-4 ml-1 shrink-0">
-                <p className="text-2xl font-black text-foreground tabular-nums tracking-tighter">
-                  {now.toLocaleTimeString("pt-BR", { 
-                    timeZone: refreshSettings.timezone,
-                    hour: "2-digit", 
-                    minute: "2-digit", 
-                    second: "2-digit" 
-                  })}
-                </p>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-0.5">
-                  {now.toLocaleDateString("pt-BR", { 
-                    timeZone: refreshSettings.timezone,
-                    weekday: "long", 
-                    day: "numeric", 
-                    month: "short" 
-                  })}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Stats Bar - Large for TV visibility */}
-      <div className="bg-card border-b border-border shadow-sm z-30 relative w-full">
-        <div className="w-full px-4 py-2">
-          <div className="flex items-center gap-6">
-            <StatBadge label="Total Ativos" value={stats.total} large />
-            <div className="h-6 w-px bg-border"></div>
-            <StatBadge label="Críticos" value={stats.emergency} variant="emergency" large />
-            <StatBadge label="Urgentes" value={stats.urgent} variant="urgent" large />
-            <StatBadge label="Rotina" value={stats.routine} variant="routine" large />
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <main className="flex-1 w-full overflow-hidden flex flex-col min-h-0 bg-muted/30">
-        <div className="flex flex-col xl:flex-row h-full min-h-0">
-          {/* Active Calls List - Takes most space */}
-          <div className="flex-1 flex flex-col h-full min-h-0 relative">
-            <div className="px-4 py-2 bg-background border-b border-border shadow-sm z-10 shrink-0 absolute top-0 left-0 right-0 h-[45px]">
-              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-                <Clock className="h-5 w-5 text-primary" />
-                Chamados Ativos
-              </h2>
-            </div>
-            
-            <div className="absolute inset-0 top-[45px] bottom-0 overflow-y-auto p-4 scrollbar-hide pb-24">
-              {activeCalls.length === 0 ? (
-                <Card className="border-2 border-dashed">
-                  <CardContent className="py-24 text-center">
-                    <CheckCircle2 className="h-20 w-20 text-success mx-auto mb-6" />
-                    <p className="text-3xl font-bold text-foreground">Nenhum chamado pendente</p>
-                    <p className="text-xl text-muted-foreground mt-3">Todos os pacientes foram atendidos</p>
-                  </CardContent>
-                </Card>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-                  {activeCalls.map((call) => (
-                    <CallCard 
-                      key={call.id} 
-                      call={call} 
-                      now={now} 
-                      onSeen={markAsSeen} 
-                      onAttend={attendCall} 
-                      onComplete={completeCall} 
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Sidebar - Compact */}
-          <div className="w-full xl:w-[280px] 2xl:w-[320px] bg-background border-t xl:border-t-0 xl:border-l border-border flex flex-col shrink-0 h-full min-h-0 relative">
-            {/* Recent Completed */}
-            <div className="flex flex-col h-full relative">
+            {/* Sidebar - Compact */}
+            <Panel defaultSize={layout.mainRight} minSize={15} maxSize={40} className="bg-background border-t xl:border-t-0 xl:border-l border-border flex flex-col shrink-0 h-full relative">
+              {/* Recent Completed */}
               <div className="py-2 px-4 bg-muted/10 border-b border-border shadow-sm shrink-0 absolute top-0 left-0 right-0 h-[45px] z-10">
                 <h3 className="text-base font-bold flex items-center gap-2 text-foreground/90">
                   <CheckCircle2 className="h-5 w-5 text-success" />
@@ -290,20 +394,20 @@ export function NursingDashboard() {
                         key={call.id} 
                         className="flex items-center justify-between px-5 py-3.5 border-b border-border/40 last:border-0 hover:bg-muted/20 transition-colors"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-1.5 h-1.5 rounded-full bg-success/70" />
-                          <div className="flex flex-col">
-                            <span className="text-base font-bold text-foreground/90">
+                        <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-success/70 shrink-0" />
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-base font-bold text-foreground/90 truncate">
                               Leito {call.bedNumber}
                             </span>
-                            <span className="text-xs font-semibold text-muted-foreground/80 mt-0.5">
+                            <span className="text-xs font-semibold text-muted-foreground/80 mt-0.5 truncate">
                               {getCallTypeLabel(call.callType)}
                             </span>
                           </div>
                         </div>
                         
                         <div 
-                          className="flex flex-col items-end"
+                          className="flex flex-col items-end shrink-0"
                           title={`Finalizado às ${new Date(call.completedAt || new Date()).toLocaleTimeString("pt-BR", { timeZone: refreshSettings?.timezone, hour: "2-digit", minute: "2-digit" })}`}
                         >
                           <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/60 mb-1">
@@ -318,10 +422,56 @@ export function NursingDashboard() {
                   </div>
                 )}
               </div>
+            </Panel>
+          </PanelGroup>
+        </Panel>
+      </PanelGroup>
+
+      {/* Password Dialog for Unlocking Layout */}
+      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-primary" />
+              Desbloquear Redimensionamento
+            </DialogTitle>
+            <DialogDescription>
+              Apenas administradores podem alterar o layout da tela. Insira suas credenciais.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleUnlockSubmit} className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Email do Administrador</label>
+              <Input 
+                type="email" 
+                placeholder="admin@hospital.com" 
+                value={adminEmail}
+                onChange={e => setAdminEmail(e.target.value)}
+                required
+              />
             </div>
-          </div>
-        </div>
-      </main>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Senha</label>
+              <Input 
+                type="password" 
+                placeholder="••••••••" 
+                value={adminPassword}
+                onChange={e => setAdminPassword(e.target.value)}
+                required
+              />
+            </div>
+            {loginError && (
+              <p className="text-sm text-red-500 font-medium">{loginError}</p>
+            )}
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowPasswordDialog(false)}>Cancelar</Button>
+              <Button type="submit" disabled={isLoggingIn}>
+                {isLoggingIn ? "Verificando..." : "Desbloquear"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

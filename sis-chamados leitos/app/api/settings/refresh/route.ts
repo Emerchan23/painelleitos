@@ -14,6 +14,13 @@ function mapDBToRefreshSettings(db: DBRefreshSettings): RefreshSettings {
 // Helper for System Settings since it doesn't have its own API endpoint
 async function getSystemSettings() {
   try {
+    // Tenta garantir que a coluna existe
+    try {
+      await execute('ALTER TABLE system_settings ADD COLUMN dashboard_layout varchar(1000) DEFAULT NULL');
+    } catch (e) {
+      // Ignora erro se a coluna já existir
+    }
+    
     const settings = await queryOne<any>(
       'SELECT * FROM system_settings WHERE id = ?',
       ['default']
@@ -28,6 +35,7 @@ async function getSystemSettings() {
           company_name varchar(255) DEFAULT 'HOSPITAL SYSTEM',
           logo_url varchar(255) DEFAULT NULL,
           primary_color varchar(50) DEFAULT '#0ea5e9',
+          dashboard_layout varchar(1000) DEFAULT NULL,
           updated_at timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
           PRIMARY KEY (id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -80,7 +88,8 @@ export async function GET() {
     const finalSettings = {
       ...mapDBToRefreshSettings(settings!),
       company_name: sysSettings?.company_name || 'HOSPITAL SYSTEM',
-      logo_url: sysSettings?.logo_url || ''
+      logo_url: sysSettings?.logo_url || '',
+      dashboard_layout: sysSettings?.dashboard_layout || null
     }
 
     return NextResponse.json<ApiResponse<{ settings: any }>>(
@@ -103,7 +112,7 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     const body: any = await request.json()
-    const { enabled, intervalSeconds, timezone, company_name, logo_url } = body
+    const { enabled, intervalSeconds, timezone, company_name, logo_url, dashboard_layout } = body
 
     const updates: string[] = []
     const values: unknown[] = []
@@ -141,6 +150,11 @@ export async function PUT(request: NextRequest) {
       sysValues.push(logo_url)
     }
 
+    if (dashboard_layout !== undefined) {
+      sysUpdates.push('dashboard_layout = ?')
+      sysValues.push(dashboard_layout ? JSON.stringify(dashboard_layout) : null)
+    }
+
     if (sysUpdates.length > 0) {
       // Garantir que existe a linha
       const hasSysSettings = await getSystemSettings()
@@ -174,7 +188,8 @@ export async function PUT(request: NextRequest) {
     const finalSettings = {
       ...mapDBToRefreshSettings(updatedSettings!),
       company_name: sysSettings?.company_name || 'HOSPITAL SYSTEM',
-      logo_url: sysSettings?.logo_url || ''
+      logo_url: sysSettings?.logo_url || '',
+      dashboard_layout: sysSettings?.dashboard_layout || null
     }
 
     return NextResponse.json<ApiResponse<{ settings: any }>>(

@@ -55,6 +55,7 @@ export interface RefreshSettings {
   timezone: TimezoneOption
   company_name?: string
   logo_url?: string
+  dashboard_layout?: string | null
 }
 
 export interface Bed {
