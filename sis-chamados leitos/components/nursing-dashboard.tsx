@@ -204,9 +204,13 @@ export function NursingDashboard() {
     
     if (durationMs < 0) durationMs = 0
     
-    const durationMin = Math.floor(durationMs / 60000)
+    const durationHours = Math.floor(durationMs / 3600000)
+    const durationMin = Math.floor((durationMs % 3600000) / 60000)
     const durationSec = Math.floor((durationMs % 60000) / 1000)
     
+    if (durationHours > 0) {
+      return `${durationHours}h ${durationMin}m ${durationSec}s`
+    }
     return `${durationMin}m ${durationSec}s`
   }
 
@@ -605,10 +609,11 @@ function CallCard({
   // Se o status for "attending", mostramos o tempo de atendimento em vez do tempo de espera total
   const displayTime = call.status === "attending" ? attendingTime : waitingTime
   
-  const minutes = Math.floor(displayTime / 60)
+  const hours = Math.floor(displayTime / 3600)
+  const minutes = Math.floor((displayTime % 3600) / 60)
   const seconds = displayTime % 60
 
-  const isLongWait = minutes >= 5
+  const isLongWait = hours > 0 || minutes >= 5
   const isCritical = call.priority === "emergency"
   const isPending = call.status === "pending"
   
@@ -616,7 +621,7 @@ function CallCard({
   let timerColorClass = "text-foreground bg-muted/50"
   
   if (call.status === "pending" || call.status === "seen") {
-    if (minutes >= 5) {
+    if (hours > 0 || minutes >= 5) {
       timerColorClass = "text-red-600 bg-red-100 ring-2 ring-red-500/50 dark:text-red-400 dark:bg-red-950/50"
     } else if (minutes >= 2) {
       timerColorClass = "text-orange-600 bg-orange-100 ring-2 ring-orange-500/50 dark:text-orange-400 dark:bg-orange-950/50"
@@ -639,58 +644,58 @@ function CallCard({
       isPending && call.priority === "urgent" && "animate-blink-urgent bg-urgent/5",
       isPending && call.priority === "routine" && "animate-blink-routine bg-routine/5"
     )}>
-      <CardContent className="p-0 flex flex-col h-full w-full justify-between">
+      <CardContent className="p-0 flex flex-col h-full w-full justify-between overflow-hidden">
         {/* Top Section: Room & Timer */}
-        <div className="flex items-start justify-between w-full shrink-0 bg-black/5 p-1.5 border-b border-border/50">
+        <div className="flex items-start justify-between w-full shrink-0 bg-black/5 px-2 py-0 border-b border-border/50">
           <div className="flex items-center gap-1.5 flex-1 min-w-0">
             <div className={cn("p-1 rounded-md shrink-0 flex items-center justify-center", priorityConfig.className)}>
-              <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+              <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
-            <h3 className="text-lg sm:text-xl font-black text-foreground tracking-tight leading-none truncate" title={call.room || call.patientName || 'Quarto'}>
+            <h3 className="text-xl sm:text-2xl font-black text-foreground tracking-tight leading-none truncate" title={call.room || call.patientName || 'Quarto'}>
               {call.room || call.patientName || 'Quarto'}
             </h3>
           </div>
           
           {/* Timer absolute top right */}
           <div className={cn(
-            "flex flex-col items-center justify-center shrink-0 px-1.5 py-0.5 rounded shadow-inner transition-colors duration-500 min-w-[50px]",
+            "flex flex-col items-center justify-center shrink-0 px-2 py-0.5 rounded shadow-inner transition-colors duration-500 min-w-[60px] my-0.5",
             timerColorClass
           )}>
-            <div className="flex items-center gap-1 text-[10px] sm:text-xs font-mono font-bold">
-              <Clock className="h-2.5 w-2.5 hidden sm:block" />
+            <div className="flex items-center gap-1 text-xs sm:text-sm font-mono font-bold">
+              <Clock className="h-3 w-3 hidden sm:block" />
               <span>
-                {minutes > 0 ? `${minutes}m ` : ''}{String(seconds).padStart(2, "0")}s
+                {hours > 0 ? `${hours}h ` : ''}{minutes > 0 || hours > 0 ? `${minutes}m ` : ''}{String(seconds).padStart(2, "0")}s
               </span>
             </div>
           </div>
         </div>
 
         {/* Middle Section: Details (Takes remaining space) */}
-        <div className="flex flex-col justify-center flex-1 w-full min-h-0 overflow-hidden px-2 py-0.5">
-          <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+        <div className="flex flex-col justify-center flex-1 w-full min-h-0 overflow-hidden px-2 py-0 -my-1">
+          <div className="flex items-center gap-2 flex-wrap mb-1">
             {call.bedNumber && call.bedNumber !== call.room && call.bedNumber !== call.patientName && (
-              <span className="text-xs sm:text-sm font-bold text-muted-foreground leading-none">Leito {call.bedNumber}</span>
+              <span className="text-sm sm:text-base font-bold text-muted-foreground leading-none">Leito {call.bedNumber}</span>
             )}
-            <Badge variant="outline" className={cn("text-[8px] sm:text-[9px] px-1 py-0 font-bold h-3.5 leading-none", priorityConfig.className)}>
+            <Badge variant="outline" className={cn("text-[9px] sm:text-[10px] px-1.5 py-0 font-bold h-4 sm:h-5 leading-none", priorityConfig.className)}>
               {priorityConfig.label}
             </Badge>
           </div>
           
-          <p className="text-sm sm:text-base font-bold text-foreground opacity-90 leading-tight truncate">
+          <p className="text-base sm:text-lg font-bold text-foreground opacity-90 leading-tight truncate">
             {getCallTypeLabel(call.callType)}
           </p>
           
           {call.ward && (
-            <p className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest truncate mt-0.5">
+            <p className="text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-widest truncate mt-0.5">
               {call.ward}
             </p>
           )}
         </div>
 
         {/* Bottom Section: Actions */}
-        <div className="flex flex-col gap-1 w-full shrink-0 border-t border-border/60 bg-black/5 p-1.5">
+        <div className="flex flex-col gap-1 w-full shrink-0 border-t border-border/60 bg-black/5 px-2 pt-1">
           {/* Status indicator */}
-          <div className="text-[9px] font-medium text-muted-foreground flex items-center justify-center gap-1 w-full">
+          <div className="text-[10px] sm:text-[11px] font-medium text-muted-foreground flex items-center justify-center gap-1.5 w-full">
             {call.status === "pending" && (
               <><div className="w-1.5 h-1.5 rounded-full bg-emergency animate-pulse" /> Aguardando</>
             )}
@@ -703,24 +708,24 @@ function CallCard({
           </div>
 
           {/* Buttons */}
-          <div className="flex items-center gap-1.5 w-full">
+          <div className="flex items-center gap-1.5 w-full pb-1">
             {call.status === "pending" && (
               <>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => onSeen(call.id)}
-                  className="h-6 sm:h-7 flex-1 px-1 text-[9px] sm:text-[10px] font-bold border"
+                  className="h-7 sm:h-8 flex-1 px-2 text-[10px] sm:text-[11px] font-bold border-2"
                 >
-                  <Eye className="h-2.5 w-2.5 mr-1 shrink-0 hidden sm:block" />
+                  <Eye className="h-3.5 w-3.5 mr-1.5 shrink-0 hidden sm:block" />
                   <span className="truncate">Visualizar</span>
                 </Button>
                 <Button
                   size="sm"
                   onClick={() => onAttend(call.id)}
-                  className="h-6 sm:h-7 flex-1 px-1 text-[9px] sm:text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="h-7 sm:h-8 flex-1 px-2 text-[10px] sm:text-[11px] font-bold bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  <Play className="h-2.5 w-2.5 mr-1 shrink-0 hidden sm:block" />
+                  <Play className="h-3.5 w-3.5 mr-1.5 shrink-0 hidden sm:block" />
                   <span className="truncate">Atender</span>
                 </Button>
               </>
@@ -729,9 +734,9 @@ function CallCard({
               <Button
                 size="sm"
                 onClick={() => onAttend(call.id)}
-                className="h-6 sm:h-7 w-full px-2 text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                className="h-7 sm:h-8 w-full px-4 text-[10px] sm:text-[11px] font-bold bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                <Play className="h-2.5 w-2.5 mr-1 shrink-0" />
+                <Play className="h-3.5 w-3.5 mr-2 shrink-0" />
                 Atender
               </Button>
             )}
@@ -739,9 +744,9 @@ function CallCard({
               <Button
                 size="sm"
                 onClick={() => onComplete(call.id)}
-                className="h-6 sm:h-7 w-full px-2 text-[10px] font-bold bg-success text-success-foreground hover:bg-success/90"
+                className="h-7 sm:h-8 w-full px-4 text-[10px] sm:text-[11px] font-bold bg-success text-success-foreground hover:bg-success/90"
               >
-                <CheckCircle2 className="h-2.5 w-2.5 mr-1 shrink-0" />
+                <CheckCircle2 className="h-3.5 w-3.5 mr-2 shrink-0" />
                 Finalizar
               </Button>
             )}
